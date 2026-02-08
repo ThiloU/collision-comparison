@@ -1,30 +1,24 @@
-FROM manjarolinux/build:latest
+FROM ubuntu:24.04
 
 # --- Dependencies ---
-## Pacman 
-RUN pacman -Suy --noconfirm --needed \
-    go \
-    eigen \
-    boost \
-    assimp \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential\
+    libeigen3-dev \
+    libboost-all-dev \
+    libassimp-dev \
     clang \
-    ninja \
+    ninja-build \
     curl \
-    glu \
-    && rm -f /var/cache/pacman/pkg/*
-
-## yay
-RUN useradd builduser -m                                     
-RUN passwd -d builduser                                      
-RUN printf 'builduser ALL=(ALL) ALL\n' | tee -a /etc/sudoers 
-RUN sudo -u builduser bash -c 'cd ~ \
- && git clone https://aur.archlinux.org/yay.git \
- && cd yay && makepkg -si --noconfirm' 
-
-RUN sudo -u builduser bash -c 'yay -Syy --noconfirm octomap' 
-
-## Install Python 3.8
-RUN sudo -u builduser bash -c 'yay -Syy --noconfirm python38' 
+    libglu1-mesa-dev \
+    liboctomap-dev \
+    python3 \
+    python3-pip \
+    python3-venv \
+    python3-dev \
+    git \
+    cmake \
+    make \
+    && rm -rf /var/lib/apt/lists/*
 
 ## Install Rust
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
@@ -33,7 +27,7 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 RUN mkdir collision-comparison
 
 # Jolt
-RUN cd collision-comparison \ 
+RUN cd collision-comparison \
  && git clone https://github.com/MaartenBehn/JoltPhysics.git \
  && cd JoltPhysics \
  && git checkout No-broadphase \
@@ -43,52 +37,52 @@ RUN cd collision-comparison \
  && make -j 8
 
 # Libccd
-RUN cd collision-comparison \ 
+RUN cd collision-comparison \
  && git clone https://github.com/danfis/libccd.git \
  && cd libccd \
  && mkdir build && cd build \
  && cmake -G "Unix Makefiles" .. \
- && make 
+ && make
 
 # Bullet
-RUN cd collision-comparison \ 
+RUN cd collision-comparison \
  && git clone https://github.com/MaartenBehn/bullet3.git
 
 # Fcl
-RUN cd collision-comparison \ 
- && git clone https://github.com/MaartenBehn/hpp-fcl.git \  
+RUN cd collision-comparison \
+ && git clone https://github.com/MaartenBehn/hpp-fcl.git \
  && cd hpp-fcl \
  && git submodule update --init
 
 # Compare-cpp dependecies
-RUN cd collision-comparison \ 
+RUN cd collision-comparison \
  && git clone https://github.com/nlohmann/json.git \
  && git clone https://github.com/martinus/nanobench.git \
- && git clone https://github.com/g-truc/glm.git 
+ && git clone https://github.com/g-truc/glm.git
 
 # Setup venv
-RUN cd collision-comparison \ 
- && python3.8 -m venv venv/ \
- && ./venv/bin/python3 -m pip install --upgrade pip 
+RUN cd collision-comparison \
+ && python3 -m venv venv/ \
+ && ./venv/bin/python3 -m pip install --upgrade pip
 
 # distance3d
-RUN cd collision-comparison \ 
- && git clone https://github.com/MaartenBehn/distance3d.git 
+RUN cd collision-comparison \
+ && git clone https://github.com/MaartenBehn/distance3d.git
 
 # Install distance3d
-RUN cd collision-comparison \ 
- && ./venv/bin/pip install -e ./distance3d 
+RUN cd collision-comparison \
+ && ./venv/bin/pip install -e ./distance3d
 
 # Install Pybullet
-RUN cd collision-comparison \ 
+RUN cd collision-comparison \
  && ./venv/bin/pip install pybullet
 
 # collision-rs
-RUN cd collision-comparison \ 
+RUN cd collision-comparison \
  && git clone https://github.com/MaartenBehn/collision-rs.git
 
 # gjk-rs
-RUN cd collision-comparison \ 
+RUN cd collision-comparison \
  && git clone https://github.com/MaartenBehn/gjk-rs.git
 
 # --- Copy folders ---
@@ -108,7 +102,7 @@ RUN cd collision-comparison/ \
 
 
 # --- Compare-Python ---
-ADD compare-python collision-comparison/compare-python 
+ADD compare-python collision-comparison/compare-python
 
 ENV PYTHONPATH="${PYTHONPATH}:collision-comparison/compare-python"
 
@@ -118,8 +112,11 @@ RUN cd collision-comparison \
 
 
 # --- Compare-rs ---
-ADD compare-rs collision-comparison/compare-rs 
+ADD compare-rs collision-comparison/compare-rs
 RUN rm -rf collision-comparison/compare-rs/target
+
+# set the shell to bash instead of sh, else the "source" command will not work
+SHELL ["/bin/bash", "-c"]
 
 # Run rust benchmark once
 RUN cd collision-comparison \
