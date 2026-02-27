@@ -120,9 +120,9 @@ docker run --mount type=bind,source="./results",target="/collision-comparison/re
 ### Run bechmark in docker
 ```bash
 cd /collision-comparison
-sh scripts/benchmarks/benchmark_uc1_ur10.sh 
+bash scripts/benchmarks/benchmark_uc1_ur10.sh 
 # or
-sh scripts/benchmarks/benchmark_uc6_ur10.sh 
+bash scripts/benchmarks/benchmark_uc6_ur10.sh 
 ```
 
 ## Results 
