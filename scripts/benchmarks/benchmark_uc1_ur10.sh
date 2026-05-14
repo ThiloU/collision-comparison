@@ -11,13 +11,13 @@ do
     cp "data/uc1_ur10_collision/uc1_ur10_collision_$i.json" "data/current.json"
 
     echo --- CPP ---
-    sh scripts/benchmarks/benchmark_cpp.sh
+    bash scripts/benchmarks/benchmark_cpp.sh
 
     echo --- RUST ---
-    sh scripts/benchmarks/benchmark_rust.sh
+    bash scripts/benchmarks/benchmark_rust.sh
 
     echo --- Python ---
-    sh scripts/benchmarks/benchmark_python.sh
+    bash scripts/benchmarks/benchmark_python.sh
 
     echo --- Copy Result ---
     mkdir "results/$i"

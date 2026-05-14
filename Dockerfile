@@ -18,6 +18,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     cmake \
     make \
+    libcmocka-dev \
+    wget \
     && rm -rf /var/lib/apt/lists/*
 
 ## Install Rust
@@ -54,16 +56,35 @@ RUN cd collision-comparison \
  && cd hpp-fcl \
  && git submodule update --init
 
+# OpenGJK
+RUN git clone https://github.com/MattiaMontanari/openGJK.git \
+ && cd openGJK \
+ && cmake -E make_directory build \
+ && cmake -E chdir build cmake -DCMAKE_BUILD_TYPE=Release -G Ninja .. \
+ && cmake --build build
+
+
 # Compare-cpp dependecies
 RUN cd collision-comparison \
  && git clone https://github.com/nlohmann/json.git \
  && git clone https://github.com/martinus/nanobench.git \
  && git clone https://github.com/g-truc/glm.git
 
-# Setup venv
-RUN cd collision-comparison \
- && python3 -m venv venv/ \
- && ./venv/bin/python3 -m pip install --upgrade pip
+# Install miniconda
+RUN cd /tmp \
+    && wget https://repo.anaconda.com/miniconda/Miniconda3-py313_26.1.1-1-Linux-x86_64.sh \
+    && bash ./Miniconda3-py313_26.1.1-1-Linux-x86_64.sh -b -p /opt/miniconda \
+    && rm Miniconda3-py313_26.1.1-1-Linux-x86_64.sh
+
+# Set up miniconda environment
+SHELL ["/bin/bash", "-c"]
+RUN source /opt/miniconda/bin/activate \
+    && conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main \
+    && conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r \
+    && conda create --name collision_env python=3.12 -y
+
+# Activate the miniconda env when entering the container
+RUN echo "source /opt/miniconda/bin/activate collision_env" >> ~/.bashrc
 
 # distance3d
 RUN cd collision-comparison \
@@ -71,11 +92,13 @@ RUN cd collision-comparison \
 
 # Install distance3d
 RUN cd collision-comparison \
- && ./venv/bin/pip install -e ./distance3d
+ && source /opt/miniconda/bin/activate collision_env \
+ && pip install -e ./distance3d
 
 # Install Pybullet
 RUN cd collision-comparison \
- && ./venv/bin/pip install pybullet
+ && source /opt/miniconda/bin/activate collision_env \
+ && pip install pybullet
 
 # collision-rs
 RUN cd collision-comparison \

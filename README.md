@@ -211,7 +211,7 @@ python3.8 -m venv venv/ \
  && ./venv/bin/python3 -m pip install --upgrade pip 
 
 # distance3d
-git clone https://github.com/MaartenBehn/distance3d.git 
+git clone https://github.com/AlexanderFabisch/distance3d.git
 
 # Install distance3d
 ./venv/bin/pip install -e ./distance3d 
