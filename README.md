@@ -193,6 +193,14 @@ git clone https://github.com/MaartenBehn/hpp-fcl.git \
  && git submodule update --init \
  && cd ..
 
+# OpenGJK
+git clone https://github.com/MattiaMontanari/openGJK.git \
+ && cd openGJK \
+ && cmake -E make_directory build \
+ && cmake -E chdir build cmake -DCMAKE_BUILD_TYPE=Release -G Ninja .. \ 
+ && cmake --build build \ 
+&& cmake -E chdir build/scalar/examples/c ./example_lib_opengjk_ce
+
 # Compare-cpp dependecies
 git clone https://github.com/nlohmann/json.git \
  && git clone https://github.com/martinus/nanobench.git \
