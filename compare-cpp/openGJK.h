@@ -12,7 +12,7 @@ using compare::Base::ColliderType;
 using compare::Base::Case;
 
 namespace compare::OpenGJK {
-    struct Collider {
+    struct OpenGJKCollider {
         btSphereShape sphere;
         btCapsuleShapeX capsule;
         btCylinderShape cylinder;
@@ -25,8 +25,8 @@ namespace compare::OpenGJK {
         btTransform transform0;
         btTransform transform1;
 
-        BulletCollider collider0;
-        BulletCollider collider1;
+        OpenGJKCollider collider0;
+        OpenGJKCollider collider1;
     };
 
     void get_cases(Case* base_cases, OpenGJKCase* openGJK_cases, int length);

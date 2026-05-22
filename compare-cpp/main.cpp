@@ -4,6 +4,7 @@
 #include "fcl.h"
 #include "bullet.h"
 #include "libccd.h"
+#include "openGJK.h"
 
 #include <iostream>
 
@@ -17,6 +18,7 @@ using compare::FCL::FCLCase;
 using compare::Jolt::JoltCase;
 using compare::Bullet::BulletCase;
 using compare::libccd::LibccdCase;
+using compare::OpenGJK::OpenGJKCase;
 
 bool is_distance_correct(float test_dist, float base_dist){
     return (base_dist <= 0 && test_dist <= 0) || abs(base_dist - test_dist) < 0.1;
@@ -89,7 +91,6 @@ int main(){
     std::ofstream renderOut("./cpp_result.json");
     ankerl::nanobench::render(ankerl::nanobench::templates::json(), bench, renderOut);
 
-	return 0;
 #endif
 
     for (int i = 0; i < cases_length; i++) {

@@ -10,7 +10,10 @@ add_executable(compare
         bullet.cpp
         utility.cpp
         collider.cpp
-        libccd.cpp)
+        libccd.cpp
+        openGJK.cpp
+        openGJK_impl.c
+)
 
 include_directories(/usr/include/assimp)
 
