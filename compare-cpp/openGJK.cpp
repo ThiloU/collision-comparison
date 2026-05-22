@@ -2,12 +2,6 @@
 
 #include <iostream>
 
-#include "BulletCollision/NarrowPhaseCollision/btComputeGjkEpaPenetration.h"
-#include "BulletCollision/NarrowPhaseCollision/btConvexPenetrationDepthSolver.h"
-#include "BulletCollision/NarrowPhaseCollision/btMinkowskiPenetrationDepthSolver.h"
-#include "BulletCollision/NarrowPhaseCollision/btPointCollector.h"
-#include "BulletCollision/NarrowPhaseCollision/btGjkPairDetector.h"
-#include "LinearMath/btIDebugDraw.h"
 
 #include "openGJK_impl.h"
 
@@ -104,84 +98,6 @@ namespace compare::OpenGJK {
     // }
 
     float get_distance(OpenGJKCase& openGJK_case) {
-        // btVoronoiSimplexSolver voronoiSimplexSolver = btVoronoiSimplexSolver();
-        // btMinkowskiPenetrationDepthSolver convexPenetrationDepthSolver = btMinkowskiPenetrationDepthSolver();
-        //
-        // btDiscreteCollisionDetectorInterface::ClosestPointInput input;
-        // input.m_transformA = openGJK_case.transform0;
-        // input.m_transformB = openGJK_case.transform1;
-        // input.m_maximumDistanceSquared = 1000.0;
-        //
-        // btPointCollector result;
-        //
-        // btGjkPairDetector pairDetector = btGjkPairDetector(openGJK_case.collider0.shape, openGJK_case.collider1.shape, &voronoiSimplexSolver, &convexPenetrationDepthSolver);
-        // pairDetector.getClosestPointsNonVirtual(input, result, nullptr);
-        //
-        // return result.m_distance;
-
-
-
-        // /* Squared distance computed by openGJK.                                 */
-        // gkFloat dd, dx, dy, dz;
-        // /* Structure of simplex used by openGJK.                                 */
-        // gkSimplex s;
-        // /* Number of vertices defining body 1 and body 2, respectively.          */
-        // int nvrtx1, nvrtx2;
-        // /* Structures of body 1 and body 2, respectively.                        */
-        // gkPolytope bd1;
-        // gkPolytope bd2;
-        // /* Specify name of input files for body 1 and body 2, respectively.      */
-        // char inputfileA[40] = "userP.dat", inputfileB[40] = "userQ.dat";
-        // /* Pointers to vertices' coordinates of body 1 and body 2, respectively. */
-        // gkFloat **vrtx1 = nullptr, **vrtx2 = nullptr;
-        //
-        // /* For importing openGJK this is Step 2: adapt the data structure for the
-        //  * two bodies that will be passed to the GJK procedure. */
-        //
-        // /* Import coordinates of object 1. */
-        // if (readinput(inputfileA, &vrtx1, &nvrtx1)) {
-        //     return (1);
-        // }
-        // bd1.coord = vrtx1;
-        // bd1.numpoints = nvrtx1;
-        //
-        // /* Import coordinates of object 2. */
-        // if (readinput(inputfileB, &vrtx2, &nvrtx2)) {
-        //     return (1);
-        // }
-        // bd2.coord = vrtx2;
-        // bd2.numpoints = nvrtx2;
-        //
-        // /* Initialise simplex as empty */
-        // s.nvrtx = 0;
-        //
-        // /* For importing openGJK this is Step 3: invoke the GJK procedure. */
-        // /* Compute squared distance using GJK algorithm. */
-        // dd = compute_minimum_distance(bd1, bd2, &s);
-        //
-        //
-        // /* Print distance between objects. */
-        // // printf("Distance between bodies %f\n", dd);
-        // // printf("Witnesses: (%f, %f, %f) and (%f, %f, %f)\n",
-        // //        s.witnesses[0][0], s.witnesses[0][1], s.witnesses[0][2],
-        // //        s.witnesses[1][0], s.witnesses[1][1], s.witnesses[1][2]);
-        // // dx = s.witnesses[0][0] - s.witnesses[1][0];
-        // // dy = s.witnesses[0][1] - s.witnesses[1][1];
-        // // dz = s.witnesses[0][2] - s.witnesses[1][2];
-        //
-        // /* Free memory */
-        // for (int i = 0; i < bd1.numpoints; i++) {
-        //     free(bd1.coord[i]);
-        // }
-        // free(bd1.coord);
-        // for (int i = 0; i < bd2.numpoints; i++) {
-        //     free(bd2.coord[i]);
-        // }
-        // free(bd2.coord);
-        //
-        // return dd;
-
-
         gkFloat ** vrtx1 = nullptr, (**vrtx2) = nullptr;
 
         int npoints_bd1 = 2;
@@ -211,10 +127,12 @@ namespace compare::OpenGJK {
         gkPolytope bd1;
         bd1.coord = vrtx1;
         bd1.numpoints = 2;
+        bd1.type = Mesh;
 
         gkPolytope bd2;
         bd2.coord = vrtx2;
         bd2.numpoints = 2;
+        bd2.type = Mesh;
 
         /* Initialize simplex as empty */
         gkSimplex s;

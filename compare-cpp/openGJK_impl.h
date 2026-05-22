@@ -59,6 +59,14 @@ extern "C" {
 #define gkEpsilon DBL_EPSILON
 #endif
 
+typedef enum {
+    Sphere,
+    Capsule,
+    Cylinder,
+    Box,
+    Mesh
+} BodyType;
+
 /*! @brief Data structure for convex polytopes.
  *
  * Polytopes are three-dimensional shapes and the GJK algorithm works directly
@@ -75,6 +83,7 @@ typedef struct gkPolytope_ {
   gkFloat** coord; /*!< Coordinates of the points of the polytope. This is owned
                       by user who manages and garbage-collects the memory for
                       these coordinates. */
+  BodyType type;  /*!< The type of this body (e.g. Mesh, Sphere, Cylinder, ...) */
 } gkPolytope;
 
 /*! @brief Data structure for simplex.

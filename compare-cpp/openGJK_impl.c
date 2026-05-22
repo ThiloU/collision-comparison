@@ -27,6 +27,7 @@
  */
 
 #include "openGJK_impl.h"
+#include "support_mappings.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -606,27 +607,27 @@ inline static void S3D(gkSimplex* s, gkFloat* v) {
 
 inline static void support(gkPolytope* restrict body,
                            const gkFloat* restrict v) {
-  gkFloat s, maxs;
-  gkFloat* vrt;
-  int better = -1;
-
-  maxs = dotProduct(body->s, v);
-
-  for (int i = 0; i < body->numpoints; ++i) {
-    vrt = body->coord[i];
-    s = dotProduct(vrt, v);
-    if (s > maxs) {
-      maxs = s;
-      better = i;
-    }
+  switch (body->type) {
+    case Sphere:
+      support_sphere(body, v);
+      break;
+    case Capsule:
+      support_capsule(body, v);
+      break;
+    case Cylinder:
+      support_cylinder(body, v);
+      break;
+    case Box:
+      support_box(body, v);
+      break;
+    case Mesh:
+      support_mesh(body, v);
+      break;
+    default:
+      printf("Error: OpenGJK tried to get support mapping for unknown body type");
+      break;
   }
-
-  if (better != -1) {
-    body->s[0] = body->coord[better][0];
-    body->s[1] = body->coord[better][1];
-    body->s[2] = body->coord[better][2];
-    body->s_idx = better;
-  }
+  support_mesh(body, v);
 }
 
 inline static void subalgorithm(gkSimplex* s, gkFloat* v) {

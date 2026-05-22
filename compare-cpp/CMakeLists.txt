@@ -13,6 +13,7 @@ add_executable(compare
         libccd.cpp
         openGJK.cpp
         openGJK_impl.c
+        support_mappings.c
 )
 
 include_directories(/usr/include/assimp)
