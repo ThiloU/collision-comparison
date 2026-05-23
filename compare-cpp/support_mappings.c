@@ -40,6 +40,5 @@ void support_mesh(gkPolytope *body, const double *v) {
         body->s[0] = body->coord[better][0];
         body->s[1] = body->coord[better][1];
         body->s[2] = body->coord[better][2];
-        body->s_idx = better;
     }
 }

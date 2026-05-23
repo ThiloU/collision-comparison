@@ -59,6 +59,11 @@
 #define norm2(a) (a[0] * a[0] + a[1] * a[1] + a[2] * a[2])
 #define dotProduct(a, b) (a[0] * b[0] + a[1] * b[1] + a[2] * b[2])
 
+/**
+ * Copies an array of 3 elements from b into a
+ */
+#define copyVectorToFrom(a, b) a[0] = b[0]; a[1] = b[1]; a[2] = b[2];
+
 #define S3Dregion1234() \
   v[0] = 0;             \
   v[1] = 0;             \
@@ -68,62 +73,62 @@
 #define select_1ik()                                             \
   s->nvrtx = 3;                                                  \
   for (t = 0; t < 3; t++) s->vrtx[2][t] = s->vrtx[3][t];         \
-  for (t = 0; t < 2; t++) s->vrtx_idx[2][t] = s->vrtx_idx[3][t]; \
+  for (t = 0; t < 2; t++) copyVectorToFrom(s->vrtx_points[2][t], s->vrtx_points[3][t]); \
   for (t = 0; t < 3; t++) s->vrtx[1][t] = si[t];                 \
-  for (t = 0; t < 2; t++) s->vrtx_idx[1][t] = si_idx[t];         \
+  for (t = 0; t < 2; t++) copyVectorToFrom(s->vrtx_points[1][t], si_points[t]);         \
   for (t = 0; t < 3; t++) s->vrtx[0][t] = sk[t];                 \
-  for (t = 0; t < 2; t++) s->vrtx_idx[0][t] = sk_idx[t];
+  for (t = 0; t < 2; t++) copyVectorToFrom(s->vrtx_points[0][t], sk_points[t]);
 
 #define select_1ij()                                             \
   s->nvrtx = 3;                                                  \
   for (t = 0; t < 3; t++) s->vrtx[2][t] = s->vrtx[3][t];         \
-  for (t = 0; t < 2; t++) s->vrtx_idx[2][t] = s->vrtx_idx[3][t]; \
+  for (t = 0; t < 2; t++) copyVectorToFrom(s->vrtx_points[2][t], s->vrtx_points[3][t]); \
   for (t = 0; t < 3; t++) s->vrtx[1][t] = si[t];                 \
-  for (t = 0; t < 2; t++) s->vrtx_idx[1][t] = si_idx[t];         \
+  for (t = 0; t < 2; t++) copyVectorToFrom(s->vrtx_points[1][t], si_points[t]);         \
   for (t = 0; t < 3; t++) s->vrtx[0][t] = sj[t];                 \
-  for (t = 0; t < 2; t++) s->vrtx_idx[0][t] = sj_idx[t];
+  for (t = 0; t < 2; t++) copyVectorToFrom(s->vrtx_points[0][t], sj_points[t]);
 
 #define select_1jk()                                             \
   s->nvrtx = 3;                                                  \
   for (t = 0; t < 3; t++) s->vrtx[2][t] = s->vrtx[3][t];         \
-  for (t = 0; t < 2; t++) s->vrtx_idx[2][t] = s->vrtx_idx[3][t]; \
+  for (t = 0; t < 2; t++) copyVectorToFrom(s->vrtx_points[2][t], s->vrtx_points[3][t]); \
   for (t = 0; t < 3; t++) s->vrtx[1][t] = sj[t];                 \
-  for (t = 0; t < 2; t++) s->vrtx_idx[1][t] = sj_idx[t];         \
+  for (t = 0; t < 2; t++) copyVectorToFrom(s->vrtx_points[1][t], sj_points[t]);         \
   for (t = 0; t < 3; t++) s->vrtx[0][t] = sk[t];                 \
-  for (t = 0; t < 2; t++) s->vrtx_idx[0][t] = sk_idx[t];
+  for (t = 0; t < 2; t++) copyVectorToFrom(s->vrtx_points[0][t], sk_points[t]);
 
 #define select_1i()                                              \
   s->nvrtx = 2;                                                  \
   for (t = 0; t < 3; t++) s->vrtx[1][t] = s->vrtx[3][t];         \
-  for (t = 0; t < 2; t++) s->vrtx_idx[1][t] = s->vrtx_idx[3][t]; \
+  for (t = 0; t < 2; t++) copyVectorToFrom(s->vrtx_points[1][t], s->vrtx_points[3][t]); \
   for (t = 0; t < 3; t++) s->vrtx[0][t] = si[t];                 \
-  for (t = 0; t < 2; t++) s->vrtx_idx[0][t] = si_idx[t];
+  for (t = 0; t < 2; t++) copyVectorToFrom(s->vrtx_points[0][t], si_points[t]);
 
 #define select_1j()                                              \
   s->nvrtx = 2;                                                  \
   for (t = 0; t < 3; t++) s->vrtx[1][t] = s->vrtx[3][t];         \
-  for (t = 0; t < 2; t++) s->vrtx_idx[1][t] = s->vrtx_idx[3][t]; \
+  for (t = 0; t < 2; t++) copyVectorToFrom(s->vrtx_points[1][t], s->vrtx_points[3][t]); \
   for (t = 0; t < 3; t++) s->vrtx[0][t] = sj[t];                 \
-  for (t = 0; t < 2; t++) s->vrtx_idx[0][t] = sj_idx[t];
+  for (t = 0; t < 2; t++) copyVectorToFrom(s->vrtx_points[0][t], sj_points[t]);
 
 #define select_1k()                                              \
   s->nvrtx = 2;                                                  \
   for (t = 0; t < 3; t++) s->vrtx[1][t] = s->vrtx[3][t];         \
-  for (t = 0; t < 2; t++) s->vrtx_idx[1][t] = s->vrtx_idx[3][t]; \
+  for (t = 0; t < 2; t++) copyVectorToFrom(s->vrtx_points[1][t], s->vrtx_points[3][t]); \
   for (t = 0; t < 3; t++) s->vrtx[0][t] = sk[t];                 \
-  for (t = 0; t < 2; t++) s->vrtx_idx[0][t] = sk_idx[t];
+  for (t = 0; t < 2; t++) copyVectorToFrom(s->vrtx_points[0][t], sk_points[t]);
 
 #define getvrtx(point, location)   \
   point[0] = s->vrtx[location][0]; \
   point[1] = s->vrtx[location][1]; \
   point[2] = s->vrtx[location][2];
 
-#define getvrtxidx(point, index, location) \
-  point[0] = s->vrtx[location][0];         \
-  point[1] = s->vrtx[location][1];         \
-  point[2] = s->vrtx[location][2];         \
-  index[0] = s->vrtx_idx[location][0];     \
-  index[1] = s->vrtx_idx[location][1];
+#define getvrtxpoints(vertex, points, location) \
+  vertex[0] = s->vrtx[location][0];         \
+  vertex[1] = s->vrtx[location][1];         \
+  vertex[2] = s->vrtx[location][2];         \
+  copyVectorToFrom(points[0], s->vrtx_points[location][0]);     \
+  copyVectorToFrom(points[1], s->vrtx_points[location][1]);
 
 #define calculateEdgeVector(p1p2, p2) \
   p1p2[0] = p2[0] - s->vrtx[3][0];    \
@@ -138,8 +143,8 @@
   s->vrtx[0][0] = s->vrtx[1][0];         \
   s->vrtx[0][1] = s->vrtx[1][1];         \
   s->vrtx[0][2] = s->vrtx[1][2];         \
-  s->vrtx_idx[0][0] = s->vrtx_idx[1][0]; \
-  s->vrtx_idx[0][1] = s->vrtx_idx[1][1];
+  copyVectorToFrom(s->vrtx_points[0][0], s->vrtx_points[1][0]); \
+  copyVectorToFrom(s->vrtx_points[0][1], s->vrtx_points[1][1]);
 
 #define S2Dregion1()                     \
   v[0] = s->vrtx[2][0];                  \
@@ -149,24 +154,24 @@
   s->vrtx[0][0] = s->vrtx[2][0];         \
   s->vrtx[0][1] = s->vrtx[2][1];         \
   s->vrtx[0][2] = s->vrtx[2][2];         \
-  s->vrtx_idx[0][0] = s->vrtx_idx[2][0]; \
-  s->vrtx_idx[0][1] = s->vrtx_idx[2][1];
+  copyVectorToFrom(s->vrtx_points[0][0], s->vrtx_points[2][0]); \
+  copyVectorToFrom(s->vrtx_points[0][1], s->vrtx_points[2][1]);
 
 #define S2Dregion12()                    \
   s->nvrtx = 2;                          \
   s->vrtx[0][0] = s->vrtx[2][0];         \
   s->vrtx[0][1] = s->vrtx[2][1];         \
   s->vrtx[0][2] = s->vrtx[2][2];         \
-  s->vrtx_idx[0][0] = s->vrtx_idx[2][0]; \
-  s->vrtx_idx[0][1] = s->vrtx_idx[2][1];
+  copyVectorToFrom(s->vrtx_points[0][0], s->vrtx_points[2][0]); \
+  copyVectorToFrom(s->vrtx_points[0][1], s->vrtx_points[2][1]);
 
 #define S2Dregion13()                    \
   s->nvrtx = 2;                          \
   s->vrtx[1][0] = s->vrtx[2][0];         \
   s->vrtx[1][1] = s->vrtx[2][1];         \
   s->vrtx[1][2] = s->vrtx[2][2];         \
-  s->vrtx_idx[1][0] = s->vrtx_idx[2][0]; \
-  s->vrtx_idx[1][1] = s->vrtx_idx[2][1];
+  copyVectorToFrom(s->vrtx_points[1][0], s->vrtx_points[2][0]); \
+  copyVectorToFrom(s->vrtx_points[1][1], s->vrtx_points[2][1]);
 
 #define S3Dregion1()             \
   v[0] = s1[0];                  \
@@ -176,8 +181,8 @@
   s->vrtx[0][0] = s1[0];         \
   s->vrtx[0][1] = s1[1];         \
   s->vrtx[0][2] = s1[2];         \
-  s->vrtx_idx[0][0] = s1_idx[0]; \
-  s->vrtx_idx[0][1] = s1_idx[1];
+  copyVectorToFrom(s->vrtx_points[0][0], s1_points[0]); \
+  copyVectorToFrom(s->vrtx_points[0][1], s1_points[1]);
 
 inline static gkFloat determinant(const gkFloat* restrict p,
                                   const gkFloat* restrict q,
@@ -338,15 +343,15 @@ inline static void S2D(gkSimplex* s, gkFloat* v) {
 inline static void S3D(gkSimplex* s, gkFloat* v) {
   gkFloat s1[3], s2[3], s3[3], s4[3], s1s2[3], s1s3[3], s1s4[3];
   gkFloat si[3], sj[3], sk[3];
-  int s1_idx[2], s2_idx[2], s3_idx[2];
-  int si_idx[2], sj_idx[2], sk_idx[2];
+  gkFloat s1_points[2][3], s2_points[2][3], s3_points[2][3];
+  gkFloat si_points[2][3], sj_points[2][3], sk_points[2][3];
   int testLineThree, testLineFour, testPlaneTwo, testPlaneThree, testPlaneFour,
       dotTotal;
   int i, j, k, t;
 
-  getvrtxidx(s1, s1_idx, 3);
-  getvrtxidx(s2, s2_idx, 2);
-  getvrtxidx(s3, s3_idx, 1);
+  getvrtxpoints(s1, s1_points, 3);
+  getvrtxpoints(s2, s2_points, 2);
+  getvrtxpoints(s3, s3_points, 1);
   getvrtx(s4, 0);
   calculateEdgeVector(s1s2, s2);
   calculateEdgeVector(s1s3, s3);
@@ -387,7 +392,7 @@ inline static void S3D(gkSimplex* s, gkFloat* v) {
           s->vrtx[2][i] = s->vrtx[3][i];
         }
         for (i = 0; i < 2; i++) {
-          s->vrtx_idx[2][i] = s->vrtx_idx[3][i];
+          copyVectorToFrom(s->vrtx_points[2][i], s->vrtx_points[3][i]);
         }
       } else if (!testPlaneThree) {
         for (i = 0; i < 3; i++) {
@@ -395,8 +400,8 @@ inline static void S3D(gkSimplex* s, gkFloat* v) {
           s->vrtx[2][i] = s->vrtx[3][i];
         }
         for (i = 0; i < 2; i++) {
-          s->vrtx_idx[1][i] = s2_idx[i];
-          s->vrtx_idx[2][i] = s->vrtx_idx[3][i];
+          copyVectorToFrom(s->vrtx_points[1][i], s2_points[i]);
+          copyVectorToFrom(s->vrtx_points[2][i], s->vrtx_points[3][i]);
         }
       } else if (!testPlaneFour) {
         for (i = 0; i < 3; i++) {
@@ -405,9 +410,9 @@ inline static void S3D(gkSimplex* s, gkFloat* v) {
           s->vrtx[2][i] = s->vrtx[3][i];
         }
         for (i = 0; i < 2; i++) {
-          s->vrtx_idx[0][i] = s3_idx[i];
-          s->vrtx_idx[1][i] = s2_idx[i];
-          s->vrtx_idx[2][i] = s->vrtx_idx[3][i];
+          copyVectorToFrom(s->vrtx_points[0][i], s3_points[i]);
+          copyVectorToFrom(s->vrtx_points[1][i], s2_points[i]);
+          copyVectorToFrom(s->vrtx_points[2][i], s->vrtx_points[3][i]);
         }
       }
       S2D(s, v);
@@ -428,9 +433,9 @@ inline static void S3D(gkSimplex* s, gkFloat* v) {
         j = 1;
       }
 
-      getvrtxidx(si, si_idx, i);
-      getvrtxidx(sj, sj_idx, j);
-      getvrtxidx(sk, sk_idx, k);
+      getvrtxpoints(si, si_points, i);
+      getvrtxpoints(sj, sj_points, j);
+      getvrtxpoints(sk, sk_points, k);
 
       if (dotTotal == 1) {
         if (hff1_tests[k]) {
@@ -547,9 +552,9 @@ inline static void S3D(gkSimplex* s, gkFloat* v) {
           i = 2;
           j = 1;
         }
-        getvrtxidx(si, si_idx, i);
-        getvrtxidx(sj, sj_idx, j);
-        getvrtxidx(sk, sk_idx, k);
+        getvrtxpoints(si, si_points, i);
+        getvrtxpoints(sj, sj_points, j);
+        getvrtxpoints(sk, sk_points, k);
 
         if (!hff2(s1, si, sj)) {
           select_1ij();
@@ -576,9 +581,9 @@ inline static void S3D(gkSimplex* s, gkFloat* v) {
           i = 2;
           j = 1;
         }
-        getvrtxidx(si, si_idx, i);
-        getvrtxidx(sj, sj_idx, j);
-        getvrtxidx(sk, sk_idx, k);
+        getvrtxpoints(si, si_points, i);
+        getvrtxpoints(sj, sj_points, j);
+        getvrtxpoints(sk, sk_points, k);
 
         if (!hff2(s1, sj, sk)) {
           if (!hff2(s1, sk, sj)) {
@@ -648,8 +653,8 @@ inline static void subalgorithm(gkSimplex* s, gkFloat* v) {
 
 inline static void W0D(const gkPolytope* bd1, const gkPolytope* bd2,
                        gkSimplex* smp) {
-  const gkFloat* w00 = bd1->coord[smp->vrtx_idx[0][0]];
-  const gkFloat* w01 = bd2->coord[smp->vrtx_idx[0][1]];
+  const gkFloat* w00 = smp->vrtx_points[0][0];
+  const gkFloat* w01 = smp->vrtx_points[0][1];
   for (int t = 0; t < 3; t++) {
     smp->witnesses[0][t] = w00[t];
     smp->witnesses[1][t] = w01[t];
@@ -680,10 +685,10 @@ inline static void W1D(const gkPolytope* bd1, const gkPolytope* bd2,
   const gkFloat a0 = 1.0 - a1;
 
   // Compute witness points
-  const gkFloat* w00 = bd1->coord[smp->vrtx_idx[0][0]];
-  const gkFloat* w01 = bd2->coord[smp->vrtx_idx[0][1]];
-  const gkFloat* w10 = bd1->coord[smp->vrtx_idx[1][0]];
-  const gkFloat* w11 = bd2->coord[smp->vrtx_idx[1][1]];
+  const gkFloat* w00 = smp->vrtx_points[0][0];
+  const gkFloat* w01 = smp->vrtx_points[0][1];
+  const gkFloat* w10 = smp->vrtx_points[1][0];
+  const gkFloat* w11 = smp->vrtx_points[1][1];
   for (int t = 0; t < 3; t++) {
     smp->witnesses[0][t] = w00[t] * a0 + w10[t] * a1;
     smp->witnesses[1][t] = w01[t] * a0 + w11[t] * a1;
@@ -754,16 +759,16 @@ inline static void W2D(const gkPolytope* bd1, const gkPolytope* bd2,
     smp->vrtx[0][0] = smp->vrtx[2][0];
     smp->vrtx[0][1] = smp->vrtx[2][1];
     smp->vrtx[0][2] = smp->vrtx[2][2];
-    smp->vrtx_idx[0][0] = smp->vrtx_idx[2][0];
-    smp->vrtx_idx[0][1] = smp->vrtx_idx[2][1];
+    copyVectorToFrom(smp->vrtx_points[0][0], smp->vrtx_points[2][0]);
+    copyVectorToFrom(smp->vrtx_points[0][1], smp->vrtx_points[2][1]);
     W1D(bd1, bd2, smp);
   } else if (a1 < gkEpsilon) {
     smp->nvrtx = 2;
     smp->vrtx[1][0] = smp->vrtx[2][0];
     smp->vrtx[1][1] = smp->vrtx[2][1];
     smp->vrtx[1][2] = smp->vrtx[2][2];
-    smp->vrtx_idx[1][0] = smp->vrtx_idx[2][0];
-    smp->vrtx_idx[1][1] = smp->vrtx_idx[2][1];
+    copyVectorToFrom(smp->vrtx_points[1][0], smp->vrtx_points[2][0]);
+    copyVectorToFrom(smp->vrtx_points[1][1], smp->vrtx_points[2][1]);
     W1D(bd1, bd2, smp);
   } else if (a2 < gkEpsilon) {
     smp->nvrtx = 2;
@@ -773,12 +778,12 @@ inline static void W2D(const gkPolytope* bd1, const gkPolytope* bd2,
   // Compute witness points
   // This is done by blending the source points using
   // the barycentric coordinates
-  const gkFloat* w00 = bd1->coord[smp->vrtx_idx[0][0]];
-  const gkFloat* w01 = bd2->coord[smp->vrtx_idx[0][1]];
-  const gkFloat* w10 = bd1->coord[smp->vrtx_idx[1][0]];
-  const gkFloat* w11 = bd2->coord[smp->vrtx_idx[1][1]];
-  const gkFloat* w20 = bd1->coord[smp->vrtx_idx[2][0]];
-  const gkFloat* w21 = bd2->coord[smp->vrtx_idx[2][1]];
+  const gkFloat* w00 = smp->vrtx_points[0][0];
+  const gkFloat* w01 = smp->vrtx_points[0][1];
+  const gkFloat* w10 = smp->vrtx_points[1][0];
+  const gkFloat* w11 = smp->vrtx_points[1][1];
+  const gkFloat* w20 = smp->vrtx_points[2][0];
+  const gkFloat* w21 = smp->vrtx_points[2][1];
   for (int t = 0; t < 3; t++) {
     smp->witnesses[0][t] = w00[t] * a0 + w10[t] * a1 + w20[t] * a2;
     smp->witnesses[1][t] = w01[t] * a0 + w11[t] * a1 + w21[t] * a2;
@@ -876,24 +881,24 @@ inline static void W3D(const gkPolytope* bd1, const gkPolytope* bd2,
     smp->vrtx[0][0] = smp->vrtx[3][0];
     smp->vrtx[0][1] = smp->vrtx[3][1];
     smp->vrtx[0][2] = smp->vrtx[3][2];
-    smp->vrtx_idx[0][0] = smp->vrtx_idx[3][0];
-    smp->vrtx_idx[0][1] = smp->vrtx_idx[3][1];
+    copyVectorToFrom(smp->vrtx_points[0][0], smp->vrtx_points[3][0]);
+    copyVectorToFrom(smp->vrtx_points[0][1], smp->vrtx_points[3][1]);
     W2D(bd1, bd2, smp);
   } else if (a1 < gkEpsilon) {
     smp->nvrtx = 3;
     smp->vrtx[1][0] = smp->vrtx[3][0];
     smp->vrtx[1][1] = smp->vrtx[3][1];
     smp->vrtx[1][2] = smp->vrtx[3][2];
-    smp->vrtx_idx[1][0] = smp->vrtx_idx[3][0];
-    smp->vrtx_idx[1][1] = smp->vrtx_idx[3][1];
+    copyVectorToFrom(smp->vrtx_points[1][0], smp->vrtx_points[3][0]);
+    copyVectorToFrom(smp->vrtx_points[1][1], smp->vrtx_points[3][1]);
     W2D(bd1, bd2, smp);
   } else if (a2 < gkEpsilon) {
     smp->nvrtx = 3;
     smp->vrtx[2][0] = smp->vrtx[3][0];
     smp->vrtx[2][1] = smp->vrtx[3][1];
     smp->vrtx[2][2] = smp->vrtx[3][2];
-    smp->vrtx_idx[2][0] = smp->vrtx_idx[3][0];
-    smp->vrtx_idx[2][1] = smp->vrtx_idx[3][1];
+    copyVectorToFrom(smp->vrtx_points[2][0], smp->vrtx_points[3][0]);
+    copyVectorToFrom(smp->vrtx_points[2][1], smp->vrtx_points[3][1]);
     W2D(bd1, bd2, smp);
   } else if (a3 < gkEpsilon) {
     smp->nvrtx = 3;
@@ -903,14 +908,14 @@ inline static void W3D(const gkPolytope* bd1, const gkPolytope* bd2,
   // Compute witness points
   // This is done by blending the original points using
   // the barycentric coordinates
-  const gkFloat* w00 = bd1->coord[smp->vrtx_idx[0][0]];
-  const gkFloat* w01 = bd2->coord[smp->vrtx_idx[0][1]];
-  const gkFloat* w10 = bd1->coord[smp->vrtx_idx[1][0]];
-  const gkFloat* w11 = bd2->coord[smp->vrtx_idx[1][1]];
-  const gkFloat* w20 = bd1->coord[smp->vrtx_idx[2][0]];
-  const gkFloat* w21 = bd2->coord[smp->vrtx_idx[2][1]];
-  const gkFloat* w30 = bd1->coord[smp->vrtx_idx[3][0]];
-  const gkFloat* w31 = bd2->coord[smp->vrtx_idx[3][1]];
+  const gkFloat* w00 = smp->vrtx_points[0][0];
+  const gkFloat* w01 = smp->vrtx_points[0][1];
+  const gkFloat* w10 = smp->vrtx_points[1][0];
+  const gkFloat* w11 = smp->vrtx_points[1][1];
+  const gkFloat* w20 = smp->vrtx_points[2][0];
+  const gkFloat* w21 = smp->vrtx_points[2][1];
+  const gkFloat* w30 = smp->vrtx_points[3][0];
+  const gkFloat* w31 = smp->vrtx_points[3][1];
   for (int t = 0; t < 3; t++) {
     smp->witnesses[0][t] =
         w00[t] * a0 + w10[t] * a1 + w20[t] * a2 + w30[t] * a3;
@@ -949,7 +954,6 @@ gkFloat compute_minimum_distance(gkPolytope bd1, gkPolytope bd2,
   const gkFloat eps_rel2 = eps_rel * eps_rel;
   unsigned int i;
   gkFloat w[3];
-  int w_idx[2];
   gkFloat v[3];
   gkFloat vminus[3];
   gkFloat norm2Wmax = 0;
@@ -963,22 +967,18 @@ gkFloat compute_minimum_distance(gkPolytope bd1, gkPolytope bd2,
   s->nvrtx = 1;
   for (int t = 0; t < 3; ++t) {
     s->vrtx[0][t] = v[t];
-  }
 
-  s->vrtx_idx[0][0] = 0;
-  s->vrtx_idx[0][1] = 0;
+    s->vrtx_points[0][0][t] = bd1.coord[0][t];
+    s->vrtx_points[0][1][t] = bd2.coord[0][t];
+  }
 
   for (int t = 0; t < 3; ++t) {
     bd1.s[t] = bd1.coord[0][t];
   }
 
-  bd1.s_idx = 0;
-
   for (int t = 0; t < 3; ++t) {
     bd2.s[t] = bd2.coord[0][t];
   }
-
-  bd2.s_idx = 0;
 
   /* Begin GJK iteration */
   do {
@@ -995,8 +995,6 @@ gkFloat compute_minimum_distance(gkPolytope bd1, gkPolytope bd2,
     for (int t = 0; t < 3; ++t) {
       w[t] = bd1.s[t] - bd2.s[t];
     }
-    w_idx[0] = bd1.s_idx;
-    w_idx[1] = bd2.s_idx;
 
     /* Test first exit condition (new point already in simplex/can't move
      * further) */
@@ -1014,9 +1012,9 @@ gkFloat compute_minimum_distance(gkPolytope bd1, gkPolytope bd2,
     i = s->nvrtx;
     for (int t = 0; t < 3; ++t) {
       s->vrtx[i][t] = w[t];
+      s->vrtx_points[i][0][t] = bd1.s[t];
+      s->vrtx_points[i][1][t] = bd2.s[t];
     }
-    s->vrtx_idx[i][0] = w_idx[0];
-    s->vrtx_idx[i][1] = w_idx[1];
     s->nvrtx++;
 
     /* Invoke distance sub-algorithm */

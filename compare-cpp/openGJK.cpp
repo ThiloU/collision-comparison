@@ -7,7 +7,6 @@
 
 
 #include <math.h>
-#define fscanf_s fscanf
 
 namespace compare::OpenGJK {
     btTransform get_transform(Collider collider){
@@ -59,44 +58,6 @@ namespace compare::OpenGJK {
         }
     }
 
-    // int readinput(const char* inputfile, gkFloat*** pts, int* out) {
-    //     int npoints = 0;
-    //     int idx = 0;
-    //     FILE* fp;
-    //
-    //     /* Open file. */
-    //     if ((fp = fopen(inputfile, "r")) == NULL) {
-    //         fprintf(stdout, "ERROR: input file %s not found!\n", inputfile);
-    //         fprintf(stdout, "  -> The file must be in the folder from which this "
-    //                         "program is launched\n\n");
-    //         return 1;
-    //     }
-    //
-    //     /* Read number of input vertices. */
-    //     if (fscanf_s(fp, "%d", &npoints) != 1) {
-    //         return 1;
-    //     }
-    //
-    //     /* Allocate memory. */
-    //     gkFloat** arr = (gkFloat**)malloc(npoints * sizeof(gkFloat*));
-    //     for (int i = 0; i < npoints; i++) {
-    //         arr[i] = (gkFloat*)malloc(3 * sizeof(gkFloat));
-    //     }
-    //
-    //     /* Read and store vertices' coordinates. */
-    //     for (idx = 0; idx < npoints; idx++) {
-    //         if (fscanf_s(fp, "%lf %lf %lf\n", &arr[idx][0], &arr[idx][1], &arr[idx][2]) != 3) {
-    //             return 1;
-    //         }
-    //     }
-    //     fclose(fp);
-    //
-    //     *pts = arr;
-    //     *out = idx;
-    //
-    //     return (0);
-    // }
-
     float get_distance(OpenGJKCase& openGJK_case) {
         gkFloat ** vrtx1 = nullptr, (**vrtx2) = nullptr;
 
@@ -108,21 +69,21 @@ namespace compare::OpenGJK {
         vrtx1[0][0] = 0.0;
         vrtx1[0][1] = 0.0;
         vrtx1[0][2] = 0.0;
-        vrtx1[1][0] = 0.0;
+        vrtx1[1][0] = 1.0;
         vrtx1[1][1] = 0.0;
-        vrtx1[1][2] = 2.0;
+        vrtx1[1][2] = 0.0;
 
         int npoints_bd2 = 2;
         vrtx2 = (gkFloat**)malloc(npoints_bd2 * sizeof(gkFloat*));
         for (int i = 0; i < npoints_bd2; i++) {
             vrtx2[i] = (gkFloat*)malloc(3 * sizeof(gkFloat));
         }
-        vrtx2[0][0] = 2.0;
-        vrtx2[0][1] = 0.0;
-        vrtx2[0][2] = 0.0;
-        vrtx2[1][0] = 2.0;
-        vrtx2[1][1] = 0.0;
-        vrtx2[1][2] = 2.0;
+        vrtx2[0][0] = 0.5;
+        vrtx2[0][1] = 1.0;
+        vrtx2[0][2] = 1.0;
+        vrtx2[1][0] = 0.5;
+        vrtx2[1][1] = 1.0;
+        vrtx2[1][2] = -1.0;
 
         gkPolytope bd1;
         bd1.coord = vrtx1;
@@ -142,6 +103,11 @@ namespace compare::OpenGJK {
         /* Compute squared distance using GJK algorithm. */
         gkFloat dd;
         dd = compute_minimum_distance(bd1, bd2, &s);
+
+        // printf("Distance between bodies %f\n", dd);
+        // printf("Witnesses: (%f, %f, %f) and (%f, %f, %f)\n",
+               // s.witnesses[0][0], s.witnesses[0][1], s.witnesses[0][2],
+               // s.witnesses[1][0], s.witnesses[1][1], s.witnesses[1][2]);
 
         return static_cast<float>(dd);
     }
