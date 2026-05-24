@@ -67,22 +67,37 @@ typedef enum {
     Mesh
 } BodyType;
 
-/*! @brief Data structure for convex polytopes.
+/*! @brief Data structure for convex bodies.
  *
- * Polytopes are three-dimensional shapes and the GJK algorithm works directly
- * on their convex-hull. However the convex-hull is never computed explicitly,
- * instead each GJK-iteration employs a support function that has a cost
- * linearly dependent on the number of points defining the polytope. */
-typedef struct gkPolytope_ {
-  int numpoints;   /*!< Number of points defining the polytope. */
-  gkFloat s[3];    /*!< Furthest point returned by the support function and updated
+ * The following fields are only filled with a meaningful value if the "type" of the body is set accordingly:
+ * radius, height, x_, y_, z_length, numpoints and coord.
+ *
+ * For each type, the following fields are set:
+ * - sphere: radius
+ * - cylinder/capsule: radius + height
+ * - box: x_length + y_length + z_length
+ * - mesh: coord + numpoints
+ */
+typedef struct gkBody_ {
+    BodyType type;  /*!< The type of this body (e.g. Mesh, Sphere, Cylinder, ...) */
+    gkFloat s[3];
+    /*!< Furthest point returned by the support function and updated
                    at each GJK-iteration. For the first iteration this value is
                    a guess - and this guess not irrelevant. */
-  gkFloat** coord; /*!< Coordinates of the points of the polytope. This is owned
-                      by user who manages and garbage-collects the memory for
-                      these coordinates. */
-  BodyType type;  /*!< The type of this body (e.g. Mesh, Sphere, Cylinder, ...) */
-} gkPolytope;
+    gkFloat rotation_mat[3][3]; /*!< Rotation from local into world frame */
+    gkFloat translation[3];  /*!< Translation from local into world frame */
+
+    gkFloat radius; /*!< Radius of the sphere/cylinder/capsule */
+    gkFloat height; /*!< Height of the cylinder/capsule */
+    gkFloat half_x_length; /*!< Length of the box in x direction */
+    gkFloat half_y_length; /*!< Length of the box in y direction */
+    gkFloat half_z_length; /*!< Length of the box in z direction */
+
+    int numpoints;   /*!< Number of points defining the polytope. */
+    gkFloat** coord; /*!< Coordinates of the points of the polytope. This is owned
+                        by user who manages and garbage-collects the memory for
+                        these coordinates. */
+} gkBody;
 
 /*! @brief Data structure for simplex.
  *
@@ -115,7 +130,7 @@ typedef struct gkSimplex_ {
  * @note The simplex has to be initialised prior the call to this function.
  *       Witness points are automatically computed and stored in s->witnesses.
  */
-OPENGJK_EXPORT gkFloat compute_minimum_distance(gkPolytope bd1, gkPolytope bd2, gkSimplex* s);
+OPENGJK_EXPORT gkFloat compute_minimum_distance(gkBody bd1, gkBody bd2, gkSimplex* s);
 
 /*! @brief Testing wrappers - expose internal functions for cross-validation.
  *

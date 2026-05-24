@@ -610,7 +610,7 @@ inline static void S3D(gkSimplex* s, gkFloat* v) {
   }
 }
 
-inline static void support(gkPolytope* restrict body,
+inline static void support(gkBody* restrict body,
                            const gkFloat* restrict v) {
   switch (body->type) {
     case Sphere:
@@ -629,7 +629,7 @@ inline static void support(gkPolytope* restrict body,
       support_mesh(body, v);
       break;
     default:
-      printf("Error: OpenGJK tried to get support mapping for unknown body type");
+      printf("Error: OpenGJK tried to get support mapping for unknown body type\n");
       break;
   }
   support_mesh(body, v);
@@ -651,7 +651,7 @@ inline static void subalgorithm(gkSimplex* s, gkFloat* v) {
   }
 }
 
-inline static void W0D(const gkPolytope* bd1, const gkPolytope* bd2,
+inline static void W0D(const gkBody* bd1, const gkBody* bd2,
                        gkSimplex* smp) {
   const gkFloat* w00 = smp->vrtx_points[0][0];
   const gkFloat* w01 = smp->vrtx_points[0][1];
@@ -661,7 +661,7 @@ inline static void W0D(const gkPolytope* bd1, const gkPolytope* bd2,
   }
 }
 
-inline static void W1D(const gkPolytope* bd1, const gkPolytope* bd2,
+inline static void W1D(const gkBody* bd1, const gkBody* bd2,
                        gkSimplex* smp) {
   gkFloat pq[3], po[3];
 
@@ -695,7 +695,7 @@ inline static void W1D(const gkPolytope* bd1, const gkPolytope* bd2,
   }
 }
 
-inline static void W2D(const gkPolytope* bd1, const gkPolytope* bd2,
+inline static void W2D(const gkBody* bd1, const gkBody* bd2,
                        gkSimplex* smp) {
   gkFloat pq[3], pr[3], po[3];
 
@@ -790,7 +790,7 @@ inline static void W2D(const gkPolytope* bd1, const gkPolytope* bd2,
   }
 }
 
-inline static void W3D(const gkPolytope* bd1, const gkPolytope* bd2,
+inline static void W3D(const gkBody* bd1, const gkBody* bd2,
                        gkSimplex* smp) {
   gkFloat pq[3], pr[3], ps[3], po[3];
 
@@ -924,8 +924,8 @@ inline static void W3D(const gkPolytope* bd1, const gkPolytope* bd2,
   }
 }
 
-inline static void compute_witnesses(const gkPolytope* bd1,
-                                     const gkPolytope* bd2, gkSimplex* smp) {
+inline static void compute_witnesses(const gkBody* bd1,
+                                     const gkBody* bd2, gkSimplex* smp) {
   switch (smp->nvrtx) {
     case 4:
       W3D(bd1, bd2, smp);
@@ -944,7 +944,7 @@ inline static void compute_witnesses(const gkPolytope* bd1,
   }
 }
 
-gkFloat compute_minimum_distance(gkPolytope bd1, gkPolytope bd2,
+gkFloat compute_minimum_distance(gkBody bd1, gkBody bd2,
                                  gkSimplex* restrict s) {
   unsigned int k = 0;
   const int mk = GJK_MAX_ITERATIONS;
@@ -959,25 +959,22 @@ gkFloat compute_minimum_distance(gkPolytope bd1, gkPolytope bd2,
   gkFloat norm2Wmax = 0;
 
   /* Initialise search direction */
-  v[0] = bd1.coord[0][0] - bd2.coord[0][0];
-  v[1] = bd1.coord[0][1] - bd2.coord[0][1];
-  v[2] = bd1.coord[0][2] - bd2.coord[0][2];
+  //TODO: implement better guess for initial search direction?
+  const gkFloat initial_v[3] = {0, 0, 1};
+  const gkFloat initial_v_minus[3] = {0, 0, -1};
+  support(&bd1, initial_v);
+  support(&bd2, initial_v_minus);
+  v[0] = bd1.s[0] - bd2.s[0];
+  v[1] = bd1.s[1] - bd2.s[1];
+  v[2] = bd1.s[2] - bd2.s[2];
 
   /* Initialise simplex */
   s->nvrtx = 1;
   for (int t = 0; t < 3; ++t) {
     s->vrtx[0][t] = v[t];
 
-    s->vrtx_points[0][0][t] = bd1.coord[0][t];
-    s->vrtx_points[0][1][t] = bd2.coord[0][t];
-  }
-
-  for (int t = 0; t < 3; ++t) {
-    bd1.s[t] = bd1.coord[0][t];
-  }
-
-  for (int t = 0; t < 3; ++t) {
-    bd2.s[t] = bd2.coord[0][t];
+    s->vrtx_points[0][0][t] = bd1.s[t];
+    s->vrtx_points[0][1][t] = bd2.s[t];
   }
 
   /* Begin GJK iteration */
@@ -1127,8 +1124,8 @@ void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[]) {
   /*----------------------------------------------------------------*/
   /* POPULATE BODIES' STRUCTURES  */
 
-  gkPolytope bd1; /* Structure of body A */
-  gkPolytope bd2; /* Structure of body B */
+  gkBody bd1; /* Structure of body A */
+  gkBody bd2; /* Structure of body B */
 
   /* Assign number of vertices to each body */
   bd1.numpoints = (int)nCoordsA;
@@ -1162,8 +1159,8 @@ OPENGJK_EXPORT gkFloat csFunction(int nCoordsA, gkFloat* inCoordsA,
   /*----------------------------------------------------------------*/
   /* POPULATE BODIES' STRUCTURES  */
 
-  gkPolytope bd1; /* Structure of body A */
-  gkPolytope bd2; /* Structure of body B */
+  gkBody bd1; /* Structure of body A */
+  gkBody bd2; /* Structure of body B */
 
   /* Assign number of vertices to each body */
   bd1.numpoints = (int)nCoordsA;

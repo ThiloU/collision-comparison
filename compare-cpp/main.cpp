@@ -35,7 +35,7 @@ int main(){
     compare::Jolt::init();
 
     Case base_cases[200];
-    int cases_length = load_cases(path, &base_cases[0], cases_length);
+    int cases_length = load_cases(path, &base_cases[0], 200);
 
     FCLCase fcl_cases[cases_length];
     compare::FCL::get_cases(&base_cases[0], &fcl_cases[0], cases_length);
