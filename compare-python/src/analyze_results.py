@@ -77,6 +77,7 @@ def get_short_names():
         "Jolt intersection": "Jolt",
         "libccd intersection": "libccd",
         "Bullet distance": "Bullet",
+        "openGJK distance": "openGJK",
 
         "ncollide_distance": "ncollide",
         "collision-rs_nasterov_gjk": "collision-rs nest",

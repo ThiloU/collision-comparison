@@ -632,7 +632,6 @@ inline static void support(gkBody* restrict body,
       printf("Error: OpenGJK tried to get support mapping for unknown body type\n");
       break;
   }
-  support_mesh(body, v);
 }
 
 inline static void subalgorithm(gkSimplex* s, gkFloat* v) {

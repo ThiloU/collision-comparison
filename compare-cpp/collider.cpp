@@ -140,7 +140,7 @@ namespace compare::Base {
             }
         }
 
-        return i + 1;
+        return i;
     }
 
 }

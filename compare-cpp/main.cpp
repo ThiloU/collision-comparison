@@ -91,6 +91,7 @@ int main(){
     std::ofstream renderOut("./cpp_result.json");
     ankerl::nanobench::render(ankerl::nanobench::templates::json(), bench, renderOut);
 
+	return 0;
 #endif
 
     for (int i = 0; i < cases_length; i++) {

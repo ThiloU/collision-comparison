@@ -58,7 +58,7 @@ for pc_name in os.listdir(result_path):
 
         cpp_short_names = {}
         cpp_data = []
-        for key in ["FCL distance", "Jolt intersection", "libccd intersection", "Bullet distance"]:
+        for key in ["FCL distance", "Jolt intersection", "libccd intersection", "Bullet distance", "openGJK distance"]:
             cpp_short_names[key] = short_names[key]
             cpp_data.append(results[key])
 
