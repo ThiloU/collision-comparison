@@ -1,5 +1,6 @@
 import json
 
+import distance3d.colliders
 import numpy as np
 
 from distance3d.colliders import Sphere, Box, Capsule, Cylinder
@@ -8,6 +9,9 @@ from distance3d.gjk import gjk
 
 def to_dict(collider):
     type = collider.__class__.__name__
+    if type == "MeshGraph":
+        type = "Mesh"
+
     data = {
         "type": type,
         "collider2origin": collider.collider2origin().tolist()
@@ -20,6 +24,11 @@ def to_dict(collider):
     if type == "Capsule" or type == "Cylinder":
         data["radius"] = collider.radius
         data["height"] = collider.length
+    if type == "Mesh":
+        collider: distance3d.colliders.MeshGraph
+        data["vertices_len"] = len(collider.vertices)
+        data["vertices"] = collider.vertices.tolist()
+        data["triangles"] = collider.triangles.tolist()
 
     return data
 
