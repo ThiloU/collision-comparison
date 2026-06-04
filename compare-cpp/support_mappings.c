@@ -110,15 +110,20 @@ void support_box(gkBody *body, const gkFloat *v) {
 }
 
 void support_mesh(gkBody *body, const gkFloat *v) {
+    gkFloat rotation_T[3][3];
+    transpose3x3(body->rotation_mat, rotation_T);
+    gkFloat direction_local[3];
+    rotateVector3D(rotation_T, v, direction_local);
+
     gkFloat s, maxs;
     gkFloat* vrt;
     int better = -1;
 
-    maxs = dotProduct(body->s, v);
+    maxs = dotProduct(body->s, direction_local);
 
     for (int i = 0; i < body->numpoints; ++i) {
         vrt = body->coord[i];
-        s = dotProduct(vrt, v);
+        s = dotProduct(vrt, direction_local);
         if (s > maxs) {
             maxs = s;
             better = i;
@@ -126,8 +131,9 @@ void support_mesh(gkBody *body, const gkFloat *v) {
     }
 
     if (better != -1) {
-        body->s[0] = body->coord[better][0];
-        body->s[1] = body->coord[better][1];
-        body->s[2] = body->coord[better][2];
+        rotateVector3D(body->rotation_mat, body->coord[better], body->s);
+        body->s[0] += body->translation[0];
+        body->s[1] += body->translation[1];
+        body->s[2] += body->translation[2];
     }
 }

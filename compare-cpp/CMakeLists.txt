@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.9.4)
 project(collision-comparison VERSION 1.0.0)
 set_property(GLOBAL PROPERTY CXX_STANDARD 20)
 
-OPTION(BUILD_PYTHON_INTERFACE OFF)
+SET(BUILD_PYTHON_INTERFACE OFF)
 
 add_executable(compare
         main.cpp

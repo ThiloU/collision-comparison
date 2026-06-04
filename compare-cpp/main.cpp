@@ -37,17 +37,17 @@ int main(){
     Case base_cases[200];
     int cases_length = load_cases(path, &base_cases[0], 200);
 
-    FCLCase fcl_cases[cases_length];
-    compare::FCL::get_cases(&base_cases[0], &fcl_cases[0], cases_length);
-
-    JoltCase jolt_cases[cases_length];
-    compare::Jolt::get_cases(&base_cases[0], &jolt_cases[0], cases_length);
-
-    BulletCase bullet_cases[cases_length];
-    compare::Bullet::get_cases(&base_cases[0], &bullet_cases[0], cases_length);
-
-    LibccdCase libccd_cases[cases_length];
-    compare::libccd::get_cases(&base_cases[0], &libccd_cases[0], cases_length);
+    // FCLCase fcl_cases[cases_length];
+    // compare::FCL::get_cases(&base_cases[0], &fcl_cases[0], cases_length);
+    //
+    // JoltCase jolt_cases[cases_length];
+    // compare::Jolt::get_cases(&base_cases[0], &jolt_cases[0], cases_length);
+    //
+    // BulletCase bullet_cases[cases_length];
+    // compare::Bullet::get_cases(&base_cases[0], &bullet_cases[0], cases_length);
+    //
+    // LibccdCase libccd_cases[cases_length];
+    // compare::libccd::get_cases(&base_cases[0], &libccd_cases[0], cases_length);
 
     OpenGJKCase openGJK_cases[cases_length];
     compare::OpenGJK::get_cases(&base_cases[0], &openGJK_cases[0], cases_length);
@@ -58,29 +58,29 @@ int main(){
     ankerl::nanobench::Bench bench;
     bench.minEpochIterations(1000);
 
-    bench.run("libccd intersection", [&] {
-        for (int i = 0; i < cases_length; i++) {
-            compare::libccd::get_intersection(libccd_cases[i]);
-        }
-    });
-
-    bench.run("Jolt intersection", [&] {
-        for (int i = 0; i < cases_length; i++) {
-            compare::Jolt::get_intersection(jolt_cases[i]);
-        }
-    });
-
-    bench.run("FCL distance", [&] {
-        for (int i = 0; i < cases_length; i++) {
-            compare::FCL::get_distance(fcl_cases[i]);
-        }
-    });
-
-    bench.run("Bullet distance", [&] {
-        for (int i = 0; i < cases_length; i++) {
-            compare::Bullet::get_distance(bullet_cases[i]);
-        }
-    });
+    // bench.run("libccd intersection", [&] {
+    //     for (int i = 0; i < cases_length; i++) {
+    //         compare::libccd::get_intersection(libccd_cases[i]);
+    //     }
+    // });
+    //
+    // bench.run("Jolt intersection", [&] {
+    //     for (int i = 0; i < cases_length; i++) {
+    //         compare::Jolt::get_intersection(jolt_cases[i]);
+    //     }
+    // });
+    //
+    // bench.run("FCL distance", [&] {
+    //     for (int i = 0; i < cases_length; i++) {
+    //         compare::FCL::get_distance(fcl_cases[i]);
+    //     }
+    // });
+    //
+    // bench.run("Bullet distance", [&] {
+    //     for (int i = 0; i < cases_length; i++) {
+    //         compare::Bullet::get_distance(bullet_cases[i]);
+    //     }
+    // });
 
     bench.run("openGJK distance", [&] {
         for (int i = 0; i < cases_length; i++) {
@@ -97,16 +97,18 @@ int main(){
     for (int i = 0; i < cases_length; i++) {
 
         float base_distance = compare::Base::get_distance(&base_cases[i]);
-        float fcl_distance = compare::FCL::get_distance(fcl_cases[i]);
-        // float fcl_distance = -999;
-        float bullet_distance = compare::Bullet::get_distance(bullet_cases[i]);
-        // float bullet_distance = -999;
+        // float fcl_distance = compare::FCL::get_distance(fcl_cases[i]);
+        float fcl_distance = -999;
+        // float bullet_distance = compare::Bullet::get_distance(bullet_cases[i]);
+        float bullet_distance = -999;
         float openGJK_distance = compare::OpenGJK::get_distance(openGJK_cases[i]);
 
         bool base_intersect   = base_distance <= 0;
-        bool libccd_intersect = compare::libccd::get_intersection(libccd_cases[i]);
+        // bool libccd_intersect = compare::libccd::get_intersection(libccd_cases[i]);
+        bool libccd_intersect = false;
         bool fcl_intersect    = fcl_distance <= 0;
-        bool jolt_intersect   = compare::Jolt::get_intersection(jolt_cases[i]);
+        // bool jolt_intersect   = compare::Jolt::get_intersection(jolt_cases[i]);
+        bool jolt_intersect = false;
         bool bullet_intersect = bullet_distance <= 0;
         bool openGJK_intersect = openGJK_distance <= 0;
 
