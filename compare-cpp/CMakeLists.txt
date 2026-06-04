@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.9.4)
 project(collision-comparison VERSION 1.0.0)
 set_property(GLOBAL PROPERTY CXX_STANDARD 20)
 
+OPTION(BUILD_PYTHON_INTERFACE OFF)
+
 add_executable(compare
         main.cpp
         jolt.cpp
@@ -33,7 +35,7 @@ include_directories(${CMAKE_SOURCE_DIR}/../JoltPhysics)
 target_link_libraries(compare ${CMAKE_SOURCE_DIR}/../JoltPhysics/Build/Linux_Distribution/libJolt.a)
 
 # FCL
-find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+find_package (Eigen3 5 REQUIRED NO_MODULE)
 target_link_libraries (compare Eigen3::Eigen)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/../hpp-fcl ${CMAKE_BINARY_DIR}/hpp-fcl)

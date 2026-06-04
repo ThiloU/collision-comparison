@@ -2,12 +2,12 @@ import random
 
 from src import write_test_file, set_random_joints, get_complex_env_bvh, get_dual_arm_tm, complex_env_dual_arm_offset, get_dual_arm_bvh_from_tm
 
-use_visual_meshes = True
+use_visual_meshes = False
 
 complex_env_tm, complex_env_bvh = get_complex_env_bvh(use_visuals=use_visual_meshes)
 dual_arm_tm = get_dual_arm_tm()
 
-datasets = 10
+datasets = 5
 i = 0
 while i <= datasets:
     set_random_joints(dual_arm_tm)

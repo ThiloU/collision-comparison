@@ -91,14 +91,16 @@ int main(){
     std::ofstream renderOut("./cpp_result.json");
     ankerl::nanobench::render(ankerl::nanobench::templates::json(), bench, renderOut);
 
-	return 0;
+	// return 0;
 #endif
 
     for (int i = 0; i < cases_length; i++) {
 
         float base_distance = compare::Base::get_distance(&base_cases[i]);
         float fcl_distance = compare::FCL::get_distance(fcl_cases[i]);
+        // float fcl_distance = -999;
         float bullet_distance = compare::Bullet::get_distance(bullet_cases[i]);
+        // float bullet_distance = -999;
         float openGJK_distance = compare::OpenGJK::get_distance(openGJK_cases[i]);
 
         bool base_intersect   = base_distance <= 0;
@@ -114,7 +116,7 @@ int main(){
         bool bullet_correct = is_distance_correct(bullet_distance, base_distance);
         bool openGJK_correct = is_distance_correct(openGJK_distance, base_distance);
 
-        if (!libccd_correct || !fcl_correct || !jolt_correct || !bullet_correct || !openGJK_correct){
+        if (true || !libccd_correct || !fcl_correct || !jolt_correct || !bullet_correct || !openGJK_correct){
             std::cout << "Not correct case: " << i << "\n"
                       << "distance3d Intersect: " << base_intersect    << " Distance: " << base_distance    << "\n"
                       << "libccd     Intersect: " << libccd_intersect  << " Distance: " << "/"              << " -> " << libccd_correct  << "\n"

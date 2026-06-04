@@ -27,6 +27,7 @@ def to_dict(collider):
     if type == "Mesh":
         collider: distance3d.colliders.MeshGraph
         data["vertices_len"] = len(collider.vertices)
+        data["triangles_len"] = len(collider.triangles)
         data["vertices"] = collider.vertices.tolist()
         data["triangles"] = collider.triangles.tolist()
 
