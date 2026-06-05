@@ -1,5 +1,6 @@
 #include "libccd.h"
 
+#include <iostream>
 #include <ccd/quat.h> // for work with quaternions
 
 #include <glm/vec3.hpp> // glm::vec3
@@ -116,6 +117,32 @@ namespace compare::libccd {
 
     }
 
+    void mesh_support(const void *_collider, const ccd_vec3_t *_dir, ccd_vec3_t *_vec){
+        Collider *collider = (Collider *)_collider;
+        ccd_vec3_t dir;
+        ccdVec3Copy(&dir, _dir);
+        const glm::vec3 local_dir = glm::transpose(glm::mat3x3(collider->colliderToOrigen)) * glm::vec3(dir.v[0], dir.v[1], dir.v[2]);
+
+        ccd_real_t score = 0;
+        ccd_real_t max_score = 0;
+        int best_idx = 0;
+
+        // if for some reason the body does not have any vertices,
+        // trying to look up the vertex at index 0 would lead to undefined behavior
+        assert(Base::get_vertex_count(*collider) >= 1);
+
+        for (int i = 0; i < Base::get_vertex_count(*collider); i++){
+            score = glm::dot(collider->vertecies[i], local_dir);
+            if (score > max_score){
+                max_score = score;
+                best_idx = i;
+            }
+        }
+
+        glm::vec3 result = transform_point(collider->colliderToOrigen, collider->vertecies[best_idx]);
+        ccdVec3Set(_vec, result[0], result[1], result[2]);
+    }
+
     ccd_support_fn get_support_function(Collider collider){
         if (collider.type == ColliderType::Sphere){
             return sphere_support;
@@ -132,6 +159,12 @@ namespace compare::libccd {
         if (collider.type == ColliderType::Box){
             return box_support;
         }
+
+        if (collider.type == ColliderType::Mesh){
+            return mesh_support;
+        }
+        std::cerr << "libccd::get_support_function: unknown collider type" << std::endl;
+        return nullptr;
     }
 
     void get_case(Collider collider0, Collider collider1, LibccdCase& libccd_case){
