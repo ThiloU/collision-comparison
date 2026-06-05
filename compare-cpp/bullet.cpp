@@ -40,6 +40,23 @@ namespace compare::Bullet {
             bullet_collider.box = btBoxShape(btVector3(get_size_x(collider) / 2, get_size_y(collider) / 2, get_size_z(collider) / 2));
             bullet_collider.shape = &bullet_collider.box;
         }
+
+        if (collider.type == ColliderType::Mesh){
+            bullet_collider.mesh = btConvexHullShape();
+            for (int i = 0; i < get_vertex_count(collider); i++){
+                auto vertex = btVector3(
+                    collider.vertecies[i].x,
+                    collider.vertecies[i].y,
+                    collider.vertecies[i].z
+                    );
+                bullet_collider.mesh.addPoint(vertex, false);
+            }
+            // unsure if this is even needed for our purposes,
+            // but it's safer to just keep all the data structures up to date:
+            bullet_collider.mesh.recalcLocalAabb();
+
+            bullet_collider.shape = &bullet_collider.mesh;
+        }
     }
 
     void get_case(Collider collider0, Collider collider1, BulletCase& bullet_case){
