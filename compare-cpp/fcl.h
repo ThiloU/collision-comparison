@@ -26,13 +26,7 @@ using hpp::fcl::details::MinkowskiDiff;
 
 namespace compare::FCL {
     struct FCLCollider {
-        Sphere sphere;
-        Capsule capsule;
-        Cylinder cylinder;
-        Box box;
-        Convex<Triangle> convex;
-
-        Vec3f* vertecies;
+        Vec3f* vertices;
         Triangle* triangles;
 
         ShapeBase* shape;

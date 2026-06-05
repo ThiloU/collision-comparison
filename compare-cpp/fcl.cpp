@@ -58,46 +58,45 @@ namespace compare::FCL {
 
     void get_collider(Collider collider, FCLCollider& fcl_collider){
         if (collider.type == ColliderType::Sphere){
-            fcl_collider.sphere = Sphere(get_radius(collider));
-            fcl_collider.shape = &fcl_collider.sphere;
+            fcl_collider.shape = new Sphere(get_radius(collider));
         }
 
         if (collider.type == ColliderType::Cylinder){
-            fcl_collider.cylinder = Cylinder(get_radius(collider), get_height(collider));
-            fcl_collider.shape = &fcl_collider.cylinder;
+            fcl_collider.shape = new Cylinder(get_radius(collider), get_height(collider));
         }
 
         if (collider.type == ColliderType::Capsule){
-            fcl_collider.capsule = Capsule(get_radius(collider), get_height(collider));
-            fcl_collider.shape = &fcl_collider.capsule;
+            fcl_collider.shape = new Capsule(get_radius(collider), get_height(collider));
         }
 
         if (collider.type == ColliderType::Box){
-            fcl_collider.box = Box(get_size_x(collider), get_size_y(collider), get_size_z(collider));
-            fcl_collider.shape = &fcl_collider.box;
+            fcl_collider.shape = new Box(get_size_x(collider), get_size_y(collider), get_size_z(collider));
         }
 
         if (collider.type == ColliderType::Mesh){
 
-            unsigned int vertex_count = get_vertex_count(collider);
-            fcl_collider.vertecies = new Vec3f[vertex_count];
+            const unsigned int vertex_count = get_vertex_count(collider);
+            const auto vertices = new Vec3f[vertex_count];
             for (int i = 0; i < vertex_count; i++){
-                fcl_collider.vertecies[i][0] = collider.vertecies[i].x;
-                fcl_collider.vertecies[i][1] = collider.vertecies[i].y;
-                fcl_collider.vertecies[i][2] = collider.vertecies[i].z;
+                vertices[i][0] = collider.vertecies[i].x;
+                vertices[i][1] = collider.vertecies[i].y;
+                vertices[i][2] = collider.vertecies[i].z;
             }
 
-            unsigned int index_count = get_index_count(collider);
-            unsigned int triangle_count = index_count / 3;
-            fcl_collider.triangles = new Triangle[triangle_count];
+            const unsigned int index_count = get_index_count(collider);
+            const unsigned int triangle_count = index_count / 3;
+            const auto triangles = new Triangle[triangle_count];
             for (int i = 0; i < triangle_count; i++){
-                fcl_collider.triangles[i][0] = collider.indicies[i * 3];
-                fcl_collider.triangles[i][1] = collider.indicies[i * 3 + 1];
-                fcl_collider.triangles[i][2] = collider.indicies[i * 3 + 2];
+                triangles[i][0] = collider.indicies[i * 3];
+                triangles[i][1] = collider.indicies[i * 3 + 1];
+                triangles[i][2] = collider.indicies[i * 3 + 2];
             }
 
-            fcl_collider.convex = Convex<Triangle>(true, fcl_collider.vertecies, vertex_count, fcl_collider.triangles, triangle_count);
-            fcl_collider.shape = &fcl_collider.convex;
+            fcl_collider.shape = new Convex<Triangle>(
+                true,
+                vertices, vertex_count,
+                triangles, triangle_count
+                );
         }
     }
 
