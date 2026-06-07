@@ -10,7 +10,7 @@ impl Collider {
                 dir.normalize() * self.radius + self.center
             },
     
-            ColliderType::Capluse => {
+            ColliderType::Capsule => {
                 /*
                 You can find similar implementations here:
     
@@ -36,7 +36,7 @@ impl Collider {
                 };
 
                 self.center + (self.transform * local_vertex)
-            },
+            }
     
             ColliderType::Cylinder => {
                 /*
@@ -86,7 +86,11 @@ impl Collider {
                 }
 
                 self.center + (self.transform * local_vertex)
-            },    
+            },
+            ColliderType::Mesh => {
+                
+                todo!("Implement mesh support function")
+            }
         }
     }
 }

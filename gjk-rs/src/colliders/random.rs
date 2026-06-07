@@ -31,7 +31,7 @@ impl Collider {
         radius_range: R,
         height_range: R) -> Self
     {
-        Self::new_capluse(
+        Self::new_capsule(
             random_mat4(rng, center_rang), 
             rng.gen_range(radius_range), 
             rng.gen_range(height_range))

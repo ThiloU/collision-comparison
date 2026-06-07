@@ -6,9 +6,10 @@ pub mod support_point;
 #[derive(PartialEq, Clone, Copy)]
 pub enum ColliderType {
     Sphere,
-    Capluse,
+    Capsule,
     Cylinder,
     Box,
+    Mesh
 }
 
 pub struct Collider {
@@ -21,6 +22,9 @@ pub struct Collider {
     pub radius: f64,
     pub height: f64,
     pub size: DVec3,
+
+    pub vertices: Vec<DVec3>,
+    pub triangles: Vec<[usize; 3]>,
 }
 
 impl Collider {
@@ -28,56 +32,80 @@ impl Collider {
     pub fn new_sphere(collider2origin: DMat4, radius: f64) -> Self {
         let transform = DMat3::from_mat4(collider2origin);
 
-        Self { 
-            typ: ColliderType::Sphere, 
-            transform, 
+        Self {
+            typ: ColliderType::Sphere,
+            transform,
             transform_transposed: transform.transpose(),
             center: Self::get_center_from_collider2origin(&collider2origin), 
             radius: radius, 
             height: 0.0,
             size: DVec3::ZERO,
+            vertices: Vec::new(),
+            triangles: Vec::new(),
         }
     }
 
-    pub fn new_capluse(collider2origin: DMat4, radius: f64, height: f64) -> Self {
+    pub fn new_capsule(collider2origin: DMat4, radius: f64, height: f64) -> Self {
         let transform = DMat3::from_mat4(collider2origin);
 
-        Self { 
-            typ: ColliderType::Capluse, 
-            transform, 
+        Self {
+            typ: ColliderType::Capsule,
+            transform,
             transform_transposed: transform.transpose(),
-            center: Self::get_center_from_collider2origin(&collider2origin), 
-            radius: radius, 
+            center: Self::get_center_from_collider2origin(&collider2origin),
+            radius: radius,
             height: height,
             size: DVec3::ZERO,
+            vertices: Vec::new(),
+            triangles: Vec::new(),
         }
     }
 
     pub fn new_cylinder(collider2origin: DMat4, radius: f64, height: f64) -> Self {
         let transform = DMat3::from_mat4(collider2origin);
 
-        Self { 
-            typ: ColliderType::Cylinder, 
-            transform, 
+        Self {
+            typ: ColliderType::Cylinder,
+            transform,
             transform_transposed: transform.transpose(),
-            center: Self::get_center_from_collider2origin(&collider2origin), 
-            radius: radius, 
+            center: Self::get_center_from_collider2origin(&collider2origin),
+            radius: radius,
             height: height,
             size: DVec3::ZERO,
+            vertices: Vec::new(),
+            triangles: Vec::new(),
         }
     }
 
     pub fn new_box(collider2origin: DMat4, size: DVec3) -> Self {
         let transform = DMat3::from_mat4(collider2origin);
 
-        Self { 
-            typ: ColliderType::Box, 
-            transform, 
+        Self {
+            typ: ColliderType::Box,
+            transform,
             transform_transposed: transform.transpose(),
-            center: Self::get_center_from_collider2origin(&collider2origin), 
-            radius: 0.0, 
+            center: Self::get_center_from_collider2origin(&collider2origin),
+            radius: 0.0,
             height: 0.0,
             size: size,
+            vertices: Vec::new(),
+            triangles: Vec::new(),
+        }
+    }
+
+    pub fn new_mesh(collider2origin: DMat4, vertices: Vec<DVec3>, triangles: Vec<[usize; 3]>) -> Self {
+        let transform = DMat3::from_mat4(collider2origin);
+
+        Self {
+            typ: ColliderType::Mesh,
+            transform,
+            transform_transposed: transform.transpose(),
+            center: Self::get_center_from_collider2origin(&collider2origin),
+            radius: 0.0,
+            height: 0.0,
+            size: DVec3::ZERO,
+            vertices,
+            triangles,
         }
     }
 

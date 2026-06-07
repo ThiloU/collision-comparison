@@ -38,8 +38,8 @@ pub fn parse_collider(json_obj: &Value) -> Collider {
             let radius = json_obj["radius"].as_f64().unwrap();
             let height = json_obj["height"].as_f64().unwrap();
 
-            Collider::new_capluse(collider2origin, radius, height)
-        }   
+            Collider::new_capsule(collider2origin, radius, height)
+        }
         "Cylinder" => {
             let collider2origin = parse_mat4(&json_obj["collider2origin"]);
 
@@ -52,8 +52,35 @@ pub fn parse_collider(json_obj: &Value) -> Collider {
             let collider2origin = parse_mat4(&json_obj["collider2origin"]);
 
             let size = parse_vec3(&json_obj["size"]);
-            
+
             Collider::new_box(collider2origin, size)
+        }
+        "Mesh" => {
+            let collider2origin = parse_mat4(&json_obj["collider2origin"]);
+
+            let vertices: Vec<DVec3> = json_obj["vertices"]
+                .as_array()
+                .expect("Mesh 'vertices' must be an array")
+                .iter()
+                .map(|v| parse_vec3(v))
+                .collect();
+
+            let triangles: Vec<[usize; 3]> = json_obj["triangles"]
+                .as_array()
+                .expect("Mesh 'triangles' must be an array")
+                .iter()
+                .map(|t| {
+                    let arr = t.as_array().expect("Each triangle must be an array of 3 indices");
+                    assert_eq!(arr.len(), 3, "Each triangle must have exactly 3 indices");
+                    [
+                        arr[0].as_u64().unwrap() as usize,
+                        arr[1].as_u64().unwrap() as usize,
+                        arr[2].as_u64().unwrap() as usize,
+                    ]
+                })
+                .collect();
+
+            Collider::new_mesh(collider2origin, vertices, triangles)
         }
         &_ => todo!()
     }
@@ -125,7 +152,7 @@ mod test{
         }"#).unwrap();
 
         let collider = parse_collider(&json_obj);
-        assert!(collider.typ == ColliderType::Capluse);
+        assert!(collider.typ == ColliderType::Capsule);
         // assert!(collider.center == vec3(0.0, 1.0, 2.0)); TODO
         assert!(collider.radius == 1.0);
         assert!(collider.height == 2.0);
