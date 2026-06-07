@@ -3,7 +3,7 @@ import json
 import distance3d.colliders
 import numpy as np
 
-from distance3d.colliders import Sphere, Box, Capsule, Cylinder
+from distance3d.colliders import Sphere, Box, Capsule, Cylinder, MeshGraph
 from distance3d.gjk import gjk
 
 
@@ -43,6 +43,10 @@ def from_dict(data):
         return Capsule(np.array(data["collider2origin"]), data["radius"], data["height"])
     if data["type"] == "Cylinder":
         return Cylinder(np.array(data["collider2origin"]), data["radius"], data["height"])
+    if data["type"] == "Mesh":
+        return MeshGraph(np.array(data["collider2origin"]), np.array(data["vertices"]), np.array(data["triangles"]))
+    print("Error: Unknown collider type")
+    exit(1)
 
 
 def write_test_file(cases, save_path, file_name):

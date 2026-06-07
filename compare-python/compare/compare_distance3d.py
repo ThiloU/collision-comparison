@@ -9,6 +9,13 @@ from distance3d.gjk import gjk_distance_original, gjk_intersection_jolt, gjk_dis
 from src import load_test_file
 
 cases = load_test_file("../data/current.json")
+
+skip_primitive_benchmarks = False
+for case in cases:
+    if type(case[0]).__name__ == "MeshGraph" or type(case[1]).__name__ == "MeshGraph":
+        skip_primitive_benchmarks = True
+        break
+
 iterations = len(cases)
 
 def benchmark_original():
@@ -76,16 +83,16 @@ micro = np.mean(times) * 1000000
 result["Nesterov (with acceleration)"] = micro
 print(f"Nesterov (with acceleration): {micro:.2f}")
 
+if not skip_primitive_benchmarks:
+    times = timeit.repeat(benchmark_nesterov_accelerated_primitives, repeat=10, number=1)
+    micro = np.mean(times) * 1000000
+    result["Nesterov (Primitives)"] = micro
+    print(f"Nesterov (Primitives): {micro:.2f}")
 
-times = timeit.repeat(benchmark_nesterov_accelerated_primitives, repeat=10, number=1)
-micro = np.mean(times) * 1000000
-result["Nesterov (Primitives)"] = micro
-print(f"Nesterov (Primitives): {micro:.2f}")
-
-times = timeit.repeat(benchmark_nesterov_accelerated_primitives_with_acceleration, repeat=10, number=1)
-micro = np.mean(times) * 1000000
-result["Nesterov (Primitives with acceleration)"] = micro
-print(f"Nesterov (Primitives with acceleration): {micro:.2f}")
+    times = timeit.repeat(benchmark_nesterov_accelerated_primitives_with_acceleration, repeat=10, number=1)
+    micro = np.mean(times) * 1000000
+    result["Nesterov (Primitives with acceleration)"] = micro
+    print(f"Nesterov (Primitives with acceleration): {micro:.2f}")
 
 file = open(f"./distance3d_result.json", "w")
 json.dump(result, file, indent=4)
