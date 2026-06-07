@@ -9,6 +9,8 @@ edition = "2021"
 name = "gjk"
 
 [dependencies]
+collision = { path = "../collision-rs" }
+cgmath = "0.18.0"
 glam = "0.23"
 serde_json = { version = "1.0", features = ["arbitrary_precision"]}
 rand = "0.8"

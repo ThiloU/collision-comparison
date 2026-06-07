@@ -1,5 +1,6 @@
+use cgmath::{Matrix4, Vector3};
 use glam::{DVec3, dvec3};
-
+use collision::Primitive;
 use super::{Collider, ColliderType};
 
 
@@ -88,8 +89,15 @@ impl Collider {
                 self.center + (self.transform * local_vertex)
             },
             ColliderType::Mesh => {
-                
-                todo!("Implement mesh support function")
+                let transform = Matrix4::<f64>::new(
+                    self.transform.col(0)[0], self.transform.col(0)[1], self.transform.col(0)[2], 0.0,
+                    self.transform.col(1)[0], self.transform.col(1)[1], self.transform.col(1)[2], 0.0,
+                    self.transform.col(2)[0], self.transform.col(2)[1], self.transform.col(2)[2], 0.0,
+                    self.center[0], self.center[1], self.center[2], 1.0
+                );
+                let direction = Vector3::new(dir.x, dir.y, dir.z);
+                let result = self.convex_mesh.support_point(&direction, &transform);
+                DVec3::new(result[0], result[1], result[2])
             }
         }
     }

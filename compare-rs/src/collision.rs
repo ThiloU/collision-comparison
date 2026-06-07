@@ -24,19 +24,7 @@ pub fn get_collider(collider: &Collider) -> (Matrix4<f64>, Primitive3<f64>){
             Primitive3::Cuboid(Cuboid::new(collider.size.x, collider.size.y, collider.size.z))
         },
         x if x == ColliderType::Mesh => {
-            let vertices: Vec<cgmath::Point3<f64>> = collider.vertices
-                .iter()
-                .map(|v| cgmath::Point3::new(v.x, v.y, v.z))
-                .collect();
-
-            let faces: Vec<(usize, usize, usize)> = collider.triangles
-                .iter()
-                .map(|t| (t[0], t[1], t[2]))
-                .collect();
-
-            Primitive3::ConvexPolyhedron(
-                collision::primitive::ConvexPolyhedron::new_with_faces(&vertices, &faces)
-            )
+            collider.convex_mesh.clone()
         },
 
         _ => todo!(),
