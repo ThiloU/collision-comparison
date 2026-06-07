@@ -14,7 +14,7 @@ namespace compare::OpenGJK {
         gkBody collider1;
     };
 
-    void get_cases(Case* base_cases, OpenGJKCase* openGJK_cases, int length);
+    void get_cases(const Case* base_cases, OpenGJKCase* openGJK_cases, int length);
     float get_distance(const OpenGJKCase& openGJK_case);
 }
 

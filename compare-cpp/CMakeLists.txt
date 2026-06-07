@@ -35,7 +35,7 @@ include_directories(${CMAKE_SOURCE_DIR}/../JoltPhysics)
 target_link_libraries(compare ${CMAKE_SOURCE_DIR}/../JoltPhysics/Build/Linux_Distribution/libJolt.a)
 
 # FCL
-find_package (Eigen3 5 REQUIRED NO_MODULE)
+find_package (Eigen3 REQUIRED NO_MODULE)
 target_link_libraries (compare Eigen3::Eigen)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/../hpp-fcl ${CMAKE_BINARY_DIR}/hpp-fcl)

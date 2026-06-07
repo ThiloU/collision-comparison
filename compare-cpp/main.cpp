@@ -46,42 +46,42 @@ int main(){
     std::vector<BulletCase> bullet_cases(cases_length);
     compare::Bullet::get_cases(&base_cases[0], &bullet_cases[0], cases_length);
 
-    // std::vector<LibccdCase> libccd_cases(cases_length);
-    // compare::libccd::get_cases(&base_cases[0], &libccd_cases[0], cases_length);
+    std::vector<LibccdCase> libccd_cases(cases_length);
+    compare::libccd::get_cases(&base_cases[0], &libccd_cases[0], cases_length);
 
     std::vector<OpenGJKCase> openGJK_cases(cases_length);
     compare::OpenGJK::get_cases(&base_cases[0], &openGJK_cases[0], cases_length);
 
-#undef NDEBUG
+#define NDEBUG
 #ifdef NDEBUG
     std::cout << "\n\n";
 
     ankerl::nanobench::Bench bench;
     bench.minEpochIterations(1000);
 
-    // bench.run("libccd intersection", [&] {
-    //     for (int i = 0; i < cases_length; i++) {
-    //         compare::libccd::get_intersection(libccd_cases[i]);
-    //     }
-    // });
-    //
-    // bench.run("Jolt intersection", [&] {
-    //     for (int i = 0; i < cases_length; i++) {
-    //         compare::Jolt::get_intersection(jolt_cases[i]);
-    //     }
-    // });
-    //
-    // bench.run("FCL distance", [&] {
-    //     for (int i = 0; i < cases_length; i++) {
-    //         compare::FCL::get_distance(fcl_cases[i]);
-    //     }
-    // });
-    //
-    // bench.run("Bullet distance", [&] {
-    //     for (int i = 0; i < cases_length; i++) {
-    //         compare::Bullet::get_distance(bullet_cases[i]);
-    //     }
-    // });
+    bench.run("libccd intersection", [&] {
+        for (int i = 0; i < cases_length; i++) {
+            compare::libccd::get_intersection(libccd_cases[i]);
+        }
+    });
+
+    bench.run("Jolt intersection", [&] {
+        for (int i = 0; i < cases_length; i++) {
+            compare::Jolt::get_intersection(jolt_cases[i]);
+        }
+    });
+
+    bench.run("FCL distance", [&] {
+        for (int i = 0; i < cases_length; i++) {
+            compare::FCL::get_distance(fcl_cases[i]);
+        }
+    });
+
+    bench.run("Bullet distance", [&] {
+        for (int i = 0; i < cases_length; i++) {
+            compare::Bullet::get_distance(bullet_cases[i]);
+        }
+    });
 
     bench.run("openGJK distance", [&] {
         for (int i = 0; i < cases_length; i++) {
@@ -105,8 +105,8 @@ int main(){
         float openGJK_distance = compare::OpenGJK::get_distance(openGJK_cases[i]);
 
         bool base_intersect   = base_distance <= 0;
-        // bool libccd_intersect = compare::libccd::get_intersection(libccd_cases[i]);
-        bool libccd_intersect = false;
+        bool libccd_intersect = compare::libccd::get_intersection(libccd_cases[i]);
+        // bool libccd_intersect = false;
         bool fcl_intersect    = fcl_distance <= 0;
         bool jolt_intersect   = compare::Jolt::get_intersection(jolt_cases[i]);
         // bool jolt_intersect = false;

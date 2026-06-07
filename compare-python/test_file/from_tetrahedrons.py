@@ -33,7 +33,7 @@ tetrahedron1_bvh = get_bvh_from_urdf(
     use_visuals=use_visual_meshes
 )
 transform = np.eye(4)
-transform[:3, :3] = Rotation.from_euler('xyz', [0, 0, 90], degrees=True).as_matrix()
+transform[:3, :3] = Rotation.from_euler('xyz', [0, 0, 0], degrees=True).as_matrix()
 transform[:3, 3] = np.array([2, 0, 0])
 
 tetrahedron2_bvh = get_bvh_from_urdf(

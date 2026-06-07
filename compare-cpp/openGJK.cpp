@@ -9,7 +9,7 @@
 #include <math.h>
 
 namespace compare::OpenGJK {
-    void get_transform(Collider collider, gkBody& gkBody){
+    void get_transform(const Collider& collider, gkBody& gkBody){
         for (int x = 0; x < 3; x++){
             for (int y = 0; y < 3; y++){
                 gkBody.rotation_mat[x][y] = collider.colliderToOrigen[x][y];
@@ -20,7 +20,7 @@ namespace compare::OpenGJK {
         gkBody.translation[2] = collider.colliderToOrigen[2][3];
     }
 
-    void get_collider(Collider collider, gkBody& gkBody){
+    void get_collider(const Collider& collider, gkBody& gkBody){
         if (collider.type == ColliderType::Sphere){
             gkBody.type = Sphere;
             gkBody.radius = get_radius(collider);
@@ -49,9 +49,9 @@ namespace compare::OpenGJK {
             gkBody.type = Mesh;
             gkBody.numpoints = get_vertex_count(collider);
 
-            gkBody.coord = (gkFloat**)malloc(gkBody.numpoints * sizeof(gkFloat*));
+            gkBody.coord = static_cast<gkFloat**>(malloc(gkBody.numpoints * sizeof(gkFloat*)));
             for (int i = 0; i < gkBody.numpoints; i++) {
-                gkBody.coord[i] = (gkFloat*)malloc(3 * sizeof(gkFloat));
+                gkBody.coord[i] = static_cast<gkFloat*>(malloc(3 * sizeof(gkFloat)));
             }
             for (int i = 0; i < gkBody.numpoints; i++){
                 gkBody.coord[i][0] = collider.vertecies[i].x;
@@ -61,7 +61,7 @@ namespace compare::OpenGJK {
         }
     }
 
-    void get_case(Collider collider0, Collider collider1, OpenGJKCase& openGJK_case){
+    void get_case(const Collider& collider0, const Collider& collider1, OpenGJKCase& openGJK_case){
         get_collider(collider0, openGJK_case.collider0);
         get_collider(collider1, openGJK_case.collider1);
 
@@ -69,11 +69,11 @@ namespace compare::OpenGJK {
         get_transform(collider1, openGJK_case.collider1);
     }
 
-    void get_cases(Case* base_cases, OpenGJKCase* openGJK_cases, int length){
+    void get_cases(const Case* base_cases, OpenGJKCase* openGJK_cases, int length){
 
         for (int i = 0; i < length; i++) {
 
-            auto base_case = base_cases[i];
+            const auto base_case = base_cases[i];
             get_case(base_case.collider0, base_case.collider1, openGJK_cases[i]);
 
         }
