@@ -107,13 +107,19 @@ impl Collider {
             .map(|v| cgmath::Point3::new(v.x, v.y, v.z))
             .collect();
 
-        let faces_cgmath: Vec<(usize, usize, usize)> = triangles
-            .iter()
-            .map(|t| (t[0], t[1], t[2]))
-            .collect();
+        // let faces_cgmath: Vec<(usize, usize, usize)> = triangles
+        //     .iter()
+        //     .map(|t| (t[0], t[1], t[2]))
+        //     .collect();
 
         let convex_mesh = Primitive3::ConvexPolyhedron(
-            collision::primitive::ConvexPolyhedron::new_with_faces(&vertices_cgmath, &faces_cgmath)
+            // it would be better to use ::new_with_faces() here to utilise
+            // the more efficient support function, but it seems that
+            // the hill-climbing support function often runs
+            // into infinite loops when used on some (more complex) meshes
+
+            // collision::primitive::ConvexPolyhedron::new_with_faces(&vertices_cgmath, &faces_cgmath)
+            collision::primitive::ConvexPolyhedron::new(&vertices_cgmath)
         );
 
         Self {
