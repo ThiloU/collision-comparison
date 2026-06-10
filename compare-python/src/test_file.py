@@ -1,6 +1,8 @@
 import json
 import os
+import sys
 from pathlib import Path
+from numpy import ndarray
 
 from scipy.spatial import ConvexHull
 
@@ -34,8 +36,34 @@ def to_dict(collider, mesh_path: str):
 
     return data
 
+def load_mesh_from_obj(file_path: Path) -> tuple[ndarray, ndarray]:
+    """
+    Loads a mesh from a OBJ file
+    :param file_path: The path to the OBJ file
+    :return: The list of vertices and the list of triangle faces (faces being represented as 3 vertex indices)
+    """
+    vertices = []
+    faces = []
+    try:
+        with open(file_path, "r") as f:
+            for line in f:
+                if line[0] == "v":
+                    vertex = list(map(float, line[2:].strip().split()))
+                    if len(vertex) != 3:
+                        raise ValueError(f"Mesh vertex should have 3 elements, but found {len(vertex)}")
+                    vertices.append(vertex)
+                elif line[0] == "f":
+                    face = list(map(lambda x: int(x)-1, line[2:].strip().split()))
+                    if len(face) != 3:
+                        raise ValueError(f"Mesh face should have 3 elements, but found {len(face)}")
+                    faces.append(face)
+    except ValueError as e:
+        print(f"Error: Could not parse mesh from '{file_path}': {e}", file=sys.stderr)
+        exit(1)
+    return np.array(vertices), np.array(faces)
 
-def from_dict(data):
+
+def from_dict(data, data_path: Path):
     if data["type"] == "Sphere":
         return Sphere(np.array(data["collider2origin"])[:3, 3], data["radius"])
     if data["type"] == "Box":
@@ -45,7 +73,8 @@ def from_dict(data):
     if data["type"] == "Cylinder":
         return Cylinder(np.array(data["collider2origin"]), data["radius"], data["height"])
     if data["type"] == "Mesh":
-        return MeshGraph(np.array(data["collider2origin"]), np.array(data["vertices"]), np.array(data["triangles"]))
+        vertices, faces = load_mesh_from_obj(Path(data_path, data["mesh_path"]))
+        return MeshGraph(np.array(data["collider2origin"]), vertices, faces)
     print("Error: Unknown collider type")
     exit(1)
 
@@ -66,12 +95,12 @@ def convert_to_convex_hull_collider(collider: MeshGraph) -> MeshGraph:
 
 
 def clean_collider_name(raw_name: str) -> str:
-    # raw_name is assumed to have following form: "[collision|visual]:actual_name/0"
+    # raw_name is assumed to have following form: "[collision|visual]:actual_name/suffix"
     parts = raw_name.split(':')
-    if len(parts) != 2 or parts[0] not in ["collision", "visual"] or parts[1][-2:] != "/0":
+    if len(parts) != 2 or parts[0] not in ["collision", "visual"]:
         raise Exception(f"Collider name did not have expected form: {raw_name}")
 
-    return parts[1][:-2]
+    return parts[1][:parts[1].rfind("/")]
 
 
 def write_mesh_file(collider: MeshGraph, file_name: str, save_path: str):
@@ -118,12 +147,13 @@ def write_test_file(cases, save_path: str, file_name: str):
     json.dump(shapes, file, indent=4)
 
 
-def load_test_file(path):
+def load_test_file(path: str):
     file = open(path)
+    data_path = Path(path[:path.rfind("/")])
     data = json.load(file)
 
     colliders = []
     for case in data:
-        colliders.append([from_dict(case["collider1"]), from_dict(case["collider2"])])
+        colliders.append([from_dict(case["collider1"], data_path), from_dict(case["collider2"], data_path)])
 
     return colliders

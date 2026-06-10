@@ -4,7 +4,7 @@ from scipy.spatial.transform import Rotation
 
 from distance3d.broad_phase import BoundingVolumeHierarchy
 from src import write_test_file
-
+import os
 
 def get_tm_from_urdf(data_path:str, urdf_file:str) -> UrdfTransformManager:
     tm = UrdfTransformManager()
@@ -48,4 +48,8 @@ list(tetrahedron1_bvh.colliders_.items())[0],
 list(tetrahedron2_bvh.colliders_.items())[0]
 )]
 
-write_test_file(cases, "../data", f"tetrahedron_collision.json")
+subdirectory_name = "../data/tetrahedron_collision"
+os.makedirs(subdirectory_name + "/meshes", exist_ok=True)
+
+
+write_test_file(cases, subdirectory_name, f"tetrahedron_collision.json")
