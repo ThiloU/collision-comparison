@@ -7,6 +7,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <vector>
 #include <nlohmann/json.hpp>
@@ -24,22 +25,37 @@ namespace compare::Base {
         std::vector<glm::vec3> vertices;
         std::vector<unsigned int> indices;
 
-        std::string line;
-        while (std::getline(file, line)) {
-            if (line.rfind("v ", 0) == 0) {
-                std::istringstream ss(line.substr(2));
-                glm::vec3 v;
-                ss >> v.x >> v.y >> v.z;
-                vertices.push_back(v);
-            } else if (line.rfind("f ", 0) == 0) {
-                std::istringstream ss(line.substr(2));
-                unsigned int a, b, c;
-                ss >> a >> b >> c;
-                // OBJ indices are 1-based, we need 0-based:
-                indices.push_back(a - 1);
-                indices.push_back(b - 1);
-                indices.push_back(c - 1);
+        try {
+            std::string line;
+            while (std::getline(file, line)) {
+                if (line.rfind("v ", 0) == 0) {
+                    std::istringstream ss(line.substr(2));
+                    glm::vec3 v;
+                    ss >> v.x >> v.y >> v.z;
+                    if (ss.fail()) {
+                        throw std::runtime_error("Expected 3 floats after 'v', got: '" + line + "'");
+                    }
+                    vertices.push_back(v);
+                } else if (line.rfind("f ", 0) == 0) {
+                    std::istringstream ss(line.substr(2));
+                    unsigned int a, b, c;
+                    ss >> a >> b >> c;
+                    if (ss.fail()) {
+                        throw std::runtime_error("Expected 3 integer indices after 'f', got: '" + line + "'");
+                    }
+                    // OBJ indices are 1-based
+                    indices.push_back(a - 1);
+                    indices.push_back(b - 1);
+                    indices.push_back(c - 1);
+                }
             }
+
+            if (vertices.empty()) throw std::runtime_error("OBJ file contains no vertices");
+            if (indices.empty()) throw std::runtime_error("OBJ file contains no faces");
+        } catch (const std::runtime_error& e) {
+            throw std::runtime_error(
+                "Failed to parse OBJ file '" + obj_path + "': " + e.what()
+            );
         }
 
         int vertices_len = (int) vertices.size();
