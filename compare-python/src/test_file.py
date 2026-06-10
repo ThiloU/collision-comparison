@@ -1,4 +1,8 @@
 import json
+import os
+from pathlib import Path
+
+from scipy.spatial import ConvexHull
 
 import distance3d.colliders
 import numpy as np
@@ -7,7 +11,7 @@ from distance3d.colliders import Sphere, Box, Capsule, Cylinder, MeshGraph
 from distance3d.gjk import gjk
 
 
-def to_dict(collider):
+def to_dict(collider, mesh_path: str):
     type = collider.__class__.__name__
     if type == "MeshGraph":
         type = "Mesh"
@@ -26,10 +30,7 @@ def to_dict(collider):
         data["height"] = collider.length
     if type == "Mesh":
         collider: distance3d.colliders.MeshGraph
-        data["vertices_len"] = len(collider.vertices)
-        data["triangles_len"] = len(collider.triangles)
-        data["vertices"] = collider.vertices.tolist()
-        data["triangles"] = collider.triangles.tolist()
+        data["mesh_path"] = mesh_path
 
     return data
 
@@ -48,22 +49,66 @@ def from_dict(data):
     print("Error: Unknown collider type")
     exit(1)
 
+def convert_to_convex_hull_collider(collider: MeshGraph) -> MeshGraph:
+    vertices_orig = np.array(collider.vertices)
+    hull = ConvexHull(vertices_orig)
+    hull_vertices = vertices_orig[hull.vertices]
 
-def write_test_file(cases, save_path, file_name):
+    # because the indices in hull.simplices are pointing to entries in the original vertex-list,
+    # we cannot use them easily to instantiate the new MeshGraph.
+    # As a quick hack, just calculate a second convex hull and assume
+    # that the input and output vertex-lists now stay the same. This way, the indices in final_hull.simplices
+    # point perfectly into hull_vertices
+    final_hull = ConvexHull(hull_vertices)
+    assert len(final_hull.vertices) == len(hull_vertices)
+
+    return MeshGraph(collider.mesh2origin, hull_vertices, final_hull.simplices)
+
+
+def clean_collider_name(raw_name: str) -> str:
+    # raw_name is assumed to have following form: "[collision|visual]:actual_name/0"
+    parts = raw_name.split(':')
+    if len(parts) != 2 or parts[0] not in ["collision", "visual"] or parts[1][-2:] != "/0":
+        raise Exception(f"Collider name did not have expected form: {raw_name}")
+
+    return parts[1][:-2]
+
+
+def write_mesh_file(collider: MeshGraph, file_name: str, save_path: str):
+    path = Path(save_path, file_name+".obj")
+    if os.path.exists(path): return
+    with open(path, "w") as f:
+        for vertex in collider.vertices:
+            f.write("v {} {} {}\n".format(vertex[0], vertex[1], vertex[2]))
+        for triangle in collider.triangles:
+            # indices in the .obj file format start at 1, therefore increment all indices first:
+            f.write("f {} {} {}\n".format(triangle[0]+1, triangle[1]+1, triangle[2]+1))
+
+def write_test_file(cases, save_path: str, file_name: str):
     shapes = []
-
+    subdirectory_name = save_path.split("/")[-1]
     i = 0
     for case in cases:
         print("Case: ", i)
 
         collider0 = case[0][1]
+        collider0_name = clean_collider_name(case[0][0])
         collider1 = case[1][1]
+        collider1_name = clean_collider_name(case[1][0])
+
+        if type(collider0) == MeshGraph:
+            collider0 = convert_to_convex_hull_collider(collider0)
+            write_mesh_file(collider0, collider0_name, save_path + "/meshes")
+
+        if type(collider1) == MeshGraph:
+            collider1 = convert_to_convex_hull_collider(collider1)
+            write_mesh_file(collider1, collider1_name, save_path + "/meshes")
 
         distance, _, _, _ = gjk(collider0, collider1)
         data = {
             "case": i,
-            "collider1": to_dict(collider0),
-            "collider2": to_dict(collider1),
+            "collider1": to_dict(collider0, subdirectory_name + "/meshes/" + collider0_name + ".obj"),
+            "collider2": to_dict(collider1, subdirectory_name + "/meshes/" + collider1_name + ".obj"),
             "distance": distance,
         }
         shapes.append(data)

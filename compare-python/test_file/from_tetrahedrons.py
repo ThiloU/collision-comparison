@@ -1,7 +1,6 @@
 import numpy as np
 from pytransform3d.urdf import UrdfTransformManager
 from scipy.spatial.transform import Rotation
-import pytransform3d.visualizer as pv
 
 from distance3d.broad_phase import BoundingVolumeHierarchy
 from src import write_test_file
@@ -50,16 +49,3 @@ list(tetrahedron2_bvh.colliders_.items())[0]
 )]
 
 write_test_file(cases, "../data", f"tetrahedron_collision.json")
-
-fig = pv.figure()
-for artist in tetrahedron1_bvh.get_artists():
-    artist.add_artist(fig)
-
-for artist in tetrahedron2_bvh.get_artists():
-    artist.add_artist(fig)
-
-# also show coordinate axis
-fig.plot_vector([5, 5, 0], [1,0,0], [1,0,0])
-fig.plot_vector([5, 5, 0], [0,1,0], [0,1,0])
-fig.plot_vector([5, 5, 0], [0,0,1], [0,0,1])
-fig.show()
