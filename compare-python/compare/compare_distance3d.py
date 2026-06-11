@@ -11,8 +11,8 @@ from src import load_test_file
 cases = load_test_file("../data/current.json")
 
 skip_primitive_benchmarks = False
-for case in cases:
-    if type(case[0]).__name__ == "MeshGraph" or type(case[1]).__name__ == "MeshGraph":
+for (collider1, _), (collider2, _) in cases:
+    if type(collider1).__name__ == "MeshGraph" or type(collider2).__name__ == "MeshGraph":
         skip_primitive_benchmarks = True
         break
 
@@ -20,37 +20,37 @@ iterations = len(cases)
 
 def benchmark_original():
     for i in range(iterations):
-        gjk_distance_original(cases[i][0], cases[i][1])
+        gjk_distance_original(cases[i][0][0], cases[i][1][0])
 
 
 def benchmark_jolt_intersection():
     for i in range(iterations):
-        gjk_intersection_jolt(cases[i][0], cases[i][1])
+        gjk_intersection_jolt(cases[i][0][0], cases[i][1][0])
 
 
 def benchmark_jolt_distance():
     for i in range(iterations):
-        gjk_distance_jolt(cases[i][0], cases[i][1])
+        gjk_distance_jolt(cases[i][0][0], cases[i][1][0])
 
 
 def benchmark_nesterov_accelerated():
     for i in range(iterations):
-        gjk_nesterov_accelerated(cases[i][0], cases[i][1], use_nesterov_acceleration=False)
+        gjk_nesterov_accelerated(cases[i][0][0], cases[i][1][0], use_nesterov_acceleration=False)
 
 
 def benchmark_nesterov_accelerated_with_acceleration():
     for i in range(iterations):
-        gjk_nesterov_accelerated(cases[i][0], cases[i][1], use_nesterov_acceleration=True)
+        gjk_nesterov_accelerated(cases[i][0][0], cases[i][1][0], use_nesterov_acceleration=True)
 
 
 def benchmark_nesterov_accelerated_primitives():
     for i in range(iterations):
-        gjk_nesterov_accelerated_primitives(cases[i][0], cases[i][1], use_nesterov_acceleration=False)
+        gjk_nesterov_accelerated_primitives(cases[i][0][0], cases[i][1][0], use_nesterov_acceleration=False)
 
 
 def benchmark_nesterov_accelerated_primitives_with_acceleration():
     for i in range(iterations):
-        gjk_nesterov_accelerated_primitives(cases[i][0], cases[i][1], use_nesterov_acceleration=True)
+        gjk_nesterov_accelerated_primitives(cases[i][0][0], cases[i][1][0], use_nesterov_acceleration=True)
 
 
 result = {}

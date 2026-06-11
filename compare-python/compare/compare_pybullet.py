@@ -18,7 +18,7 @@ def _pybullet_pos_orn(A2B):
     return pos, orn
 
 
-def get_multibody(shape, pcid):
+def get_multibody(shape, mesh_path, pcid):
     if type(shape).__name__ == "Cylinder":
         pos, orn = _pybullet_pos_orn(shape.cylinder2origin)
         collision = pb.createCollisionShape(
@@ -34,12 +34,21 @@ def get_multibody(shape, pcid):
         collision = pb.createCollisionShape(
             shapeType=pb.GEOM_SPHERE, radius=shape.radius,
             physicsClientId=pcid)
-    else:
-        assert type(shape).__name__ == "Box"
+    elif type(shape).__name__ == "Box":
         pos, orn = _pybullet_pos_orn(shape.box2origin)
         collision = pb.createCollisionShape(
             shapeType=pb.GEOM_BOX, halfExtents=0.5 * shape.size,
             physicsClientId=pcid)
+    elif type(shape).__name__ == "MeshGraph":
+        pos, orn = _pybullet_pos_orn(shape.mesh2origin)
+        collision = pb.createCollisionShape(
+            shapeType=pb.GEOM_MESH,
+            fileName = str(mesh_path),
+            physicsClientId=pcid
+        )
+    else:
+        print("Error: Unknown collider type")
+        exit(1)
 
     multibody = pb.createMultiBody(
         baseMass=1, baseInertialFramePosition=[0, 0, 0],
@@ -54,12 +63,10 @@ pcid = pb.connect(pb.DIRECT)
 collision_objects = []
 
 cases = load_test_file("../data/current.json")
-for case in cases:
-    collider1 = case[0]
-    collider2 = case[1]
+for (collider1, mesh_path_1), (collider2, mesh_path_2) in cases:
 
-    multibody1 = get_multibody(collider1, pcid)
-    multibody2 = get_multibody(collider1, pcid)
+    multibody1 = get_multibody(collider1, mesh_path_1, pcid)
+    multibody2 = get_multibody(collider2, mesh_path_2, pcid)
 
     collision_objects.append((multibody1, multibody2))
 

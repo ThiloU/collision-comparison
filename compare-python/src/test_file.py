@@ -65,18 +65,22 @@ def load_mesh_from_obj(file_path: Path) -> tuple[ndarray, ndarray]:
 
 def from_dict(data, data_path: Path):
     if data["type"] == "Sphere":
-        return Sphere(np.array(data["collider2origin"])[:3, 3], data["radius"])
-    if data["type"] == "Box":
-        return Box(np.array(data["collider2origin"]), np.array(data["size"]))
-    if data["type"] == "Capsule":
-        return Capsule(np.array(data["collider2origin"]), data["radius"], data["height"])
-    if data["type"] == "Cylinder":
-        return Cylinder(np.array(data["collider2origin"]), data["radius"], data["height"])
-    if data["type"] == "Mesh":
+        collider = Sphere(np.array(data["collider2origin"])[:3, 3], data["radius"])
+    elif data["type"] == "Box":
+        collider = Box(np.array(data["collider2origin"]), np.array(data["size"]))
+    elif data["type"] == "Capsule":
+        collider = Capsule(np.array(data["collider2origin"]), data["radius"], data["height"])
+    elif data["type"] == "Cylinder":
+        collider = Cylinder(np.array(data["collider2origin"]), data["radius"], data["height"])
+    elif data["type"] == "Mesh":
         vertices, faces = load_mesh_from_obj(Path(data_path, data["mesh_path"]))
-        return MeshGraph(np.array(data["collider2origin"]), vertices, faces)
-    print("Error: Unknown collider type")
-    exit(1)
+        collider = MeshGraph(np.array(data["collider2origin"]), vertices, faces)
+    else:
+        print("Error: Unknown collider type")
+        exit(1)
+    mesh_path = Path(data_path, data["mesh_path"]) if "mesh_path" in data else None
+    return collider, mesh_path
+
 
 def convert_to_convex_hull_collider(collider: MeshGraph) -> MeshGraph:
     vertices_orig = np.array(collider.vertices)
