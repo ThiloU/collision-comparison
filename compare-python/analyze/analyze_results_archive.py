@@ -71,8 +71,7 @@ for pc_name in os.listdir(result_path):
 
         python_short_names = {}
         python_data = []
-        for key in ["Pybullet", "distance3d Nesterov (Primitives with acceleration)", "distance3d Nesterov (Primitives)",
-                    "distance3d Nesterov (with acceleration)", "distance3d Nesterov",
+        for key in ["Pybullet", "distance3d Nesterov (with acceleration)", "distance3d Nesterov",
                     "distance3d Jolt (distance)", "distance3d Jolt (intersection)", "distance3d Original"]:
             python_short_names[key] = short_names[key]
             python_data.append(results[key])
@@ -138,7 +137,7 @@ for pc_name in os.listdir(result_path):
         plt.yticks(np.arange(0, len(short_names.values()), 1.0))
         ax.set_yticklabels(short_names.values())
         ax.set_xlabel("Time per collision check in µs")
-        ax.set_xlim(0.001, 8000)
+        # ax.set_xlim(0.001, 8000)
 
         plt.tick_params(
             axis='x',
