@@ -13,7 +13,7 @@ def get_dual_arm_tm():
     tm = UrdfTransformManager()
     f = open(data_path + urdf_file, "r")
     urdf = f.read()
-    tm.load_urdf(urdf, package_dir=data_path)
+    tm.load_urdf(urdf, package_dir=data_path, mesh_path=data_path)
 
     return tm
 

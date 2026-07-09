@@ -10,7 +10,7 @@ def get_complex_env_bvh(use_visuals=False):
     tm = UrdfTransformManager()
     f = open(data_path + urdf_file, "r")
     urdf = f.read()
-    tm.load_urdf(urdf, package_dir=data_path)
+    tm.load_urdf(urdf, package_dir=data_path, mesh_path=data_path)
 
     bvh = BoundingVolumeHierarchy(tm, "world")
     bvh.fill_tree_with_colliders(tm, make_artists=True, use_visuals=use_visuals)
