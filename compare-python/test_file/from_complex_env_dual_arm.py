@@ -10,7 +10,7 @@ dual_arm_tm = get_dual_arm_tm()
 
 subdirectory_name = "../data/complex_env_dual_arm_collision"
 os.makedirs(subdirectory_name + "/meshes", exist_ok=True)
-datasets = 5
+datasets = 20
 i = 0
 while i <= datasets:
     set_random_joints(dual_arm_tm)
