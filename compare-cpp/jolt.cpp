@@ -10,7 +10,7 @@
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 #include <Jolt/Physics/Body/BodyActivationListener.h>
 #include <Jolt/Physics/Collision/CollideShape.h>
-#include <Jolt/Physics/Collision/Shape/MeshShape.h>
+#include <Jolt/Physics/Collision/Shape/ConvexHullShape.h>
 #include <Jolt/Geometry/GJKClosestPoint.h>
 #include <Jolt/Physics/Collision/CollisionDispatch.h>
 #include <Jolt/RegisterTypes.h>
@@ -21,6 +21,7 @@ using JPH::SubShapeIDCreator;
 using JPH::CollideShapeSettings;
 using JPH::GJKClosestPoint;
 using JPH::TransformedConvexObject;
+using JPH::Array;
 
 namespace compare::Jolt {
 
@@ -71,24 +72,17 @@ namespace compare::Jolt {
         }
 
         if (collider.type == ColliderType::Mesh){
-
             unsigned int vertex_count = get_vertex_count(collider);
             for (int i = 0; i < vertex_count; i++){
-                JPH::Float3 vertex = JPH::Float3(collider.vertecies[i].x, collider.vertecies[i].y, collider.vertecies[i].z);
+                auto vertex = JPH::Vec3(collider.vertecies[i].x, collider.vertecies[i].y, collider.vertecies[i].z);
                 jolt_collider.vertexList.push_back(vertex);
             }
 
 
-            unsigned int index_count = get_index_count(collider);
-            unsigned int triangle_count = index_count / 3;
-            JPH::IndexedTriangleList indexedTriangleList;
-            for (int i = 0; i < triangle_count; i++){
-                indexedTriangleList.emplace_back(collider.indicies[i * 3], collider.indicies[i * 3 + 1], collider.indicies[i * 3 + 2]);
-            }
 
-            auto mesh_settings = JPH::MeshShapeSettings(jolt_collider.vertexList, indexedTriangleList);
+            auto mesh_settings = JPH::ConvexHullShapeSettings(jolt_collider.vertexList);
             auto result = new JPH::Shape::ShapeResult();
-            auto mesh = new JPH::MeshShape(mesh_settings, *result);
+            auto mesh = new JPH::ConvexHullShape(mesh_settings, *result);
 
             jolt_collider.shape = mesh;
 
