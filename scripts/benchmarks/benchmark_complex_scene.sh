@@ -1,6 +1,6 @@
 #!/bin/bash
 
-until [ $i -gt 9999 ]
+until [ $i -gt 999 ]
 do
   echo i: $i
   ((i=i+1))

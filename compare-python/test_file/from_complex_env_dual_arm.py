@@ -10,8 +10,11 @@ dual_arm_tm = get_dual_arm_tm()
 
 subdirectory_name = "../data/complex_env_dual_arm_collision"
 os.makedirs(subdirectory_name + "/meshes", exist_ok=True)
-datasets = 20
+datasets = 1000
 i = 0
+
+# to get reproducible benchmark cases, set the rng seed:
+random.seed(42)
 while i <= datasets:
     set_random_joints(dual_arm_tm)
 
