@@ -194,8 +194,9 @@ git clone https://github.com/MaartenBehn/hpp-fcl.git \
  && cd ..
 
 # OpenGJK
-git clone https://github.com/MattiaMontanari/openGJK.git \
- && cd openGJK \
+# git clone no longer necessary, code already in repo
+# git clone https://github.com/MattiaMontanari/openGJK.git \
+cd openGJK \
  && cmake -E make_directory build \
  && cmake -E chdir build cmake -DCMAKE_BUILD_TYPE=Release -G Ninja .. \ 
  && cmake --build build \ 
@@ -220,10 +221,12 @@ git clone https://github.com/AlexanderFabisch/distance3d.git
 ./venv/bin/pip install pybullet
 
 # collision-rs
-git clone https://github.com/MaartenBehn/collision-rs.git
+# no longer necessary, already in repo
+# git clone https://github.com/MaartenBehn/collision-rs.git
 
 # gjk-rs
-git clone https://github.com/MaartenBehn/gjk-rs.git
+# no longer necessary, already in repo
+# git clone https://github.com/MaartenBehn/gjk-rs.git
 
 rm -rf collision-comparison/compare-cpp/build_release
 
