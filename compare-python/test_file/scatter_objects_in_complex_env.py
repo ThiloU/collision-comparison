@@ -41,7 +41,6 @@ def random_point_on_upper_hemisphere(radius):
 
 
 def make_link_and_joint_xml(mesh_path_relative, link_name, joint_name, parent_link, xyz, rpy):
-    """Build a <link>/<joint> XML block matching the style of the 'powerdrill' example."""
     xyz_str = "{:.5f} {:.5f} {:.5f}".format(*xyz)
     rpy_str = "{:.5f} {:.5f} {:.5f}".format(*rpy)
     return (
@@ -119,12 +118,13 @@ def build_scene(urdf_text, meshes_root, num_objects, min_radius, max_radius):
 if __name__ == "__main__":
     input_urdf = "../data/urdfs/complex_env/complex_env.urdf"
     meshes_root = "../data/urdfs/complex_env/meshes"
-    num_objects = 20
-    min_radius = 0.3
+    num_objects = 30
+    min_radius = 0.4
     max_radius = 1.3
-    output_urdf = "../data/urdfs/complex_env/complex_env_with_objects.urdf"
+    # output_urdf = "../data/urdfs/complex_env/complex_env_with_objects.urdf"
+    output_urdf = input_urdf
 
-    random.seed(1)
+    random.seed(2)
 
     with open(input_urdf, "r") as f:
         urdf_text = f.read()
