@@ -96,8 +96,7 @@ RUN echo "source /opt/miniconda/bin/activate collision_env" >> ~/.bashrc
 # && pip install -e ./distance3d
 
 # Install Pybullet
-RUN cd collision-comparison \
- && source /opt/miniconda/bin/activate collision_env \
+RUN source /opt/miniconda/bin/activate collision_env \
  && pip install pybullet
 
 # collision-rs

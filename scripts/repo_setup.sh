@@ -3,6 +3,16 @@ source ~/.bashrc
 
 source /opt/miniconda/bin/activate collision_env
 
+mkdir -p results
+
+if [ ! -d "data/complex_env_dual_arm_collision" ]; then
+  echo "Unzipping benchmark data..."
+  cd data \
+    && unzip -q complex_env_dual_arm_collision.zip \
+    && cd ..
+fi
+
+exit 1
 
 # Clone algorithms not already in repo:
 git clone https://github.com/MaartenBehn/JoltPhysics.git
@@ -42,8 +52,6 @@ cd openGJK \
 
 pip install -e ./distance3d
 
-rm -rf compare-cpp/build_release \
- && mkdir compare-cpp/build_release/ \
- && bash scripts/compile/compile_compare_release.sh
+bash scripts/compile/compile_compare_release.sh
 
 rm -rf compare-rs/target
