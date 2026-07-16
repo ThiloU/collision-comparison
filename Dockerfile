@@ -20,6 +20,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     make \
     libcmocka-dev \
     wget \
+    unzip \
+    zip \
     && rm -rf /var/lib/apt/lists/*
 
 ## Install Rust
