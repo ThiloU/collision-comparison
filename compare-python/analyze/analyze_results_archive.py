@@ -1,9 +1,11 @@
+import datetime
 import json
 import os
 import numpy as np
 from matplotlib import pyplot as plt
 import scipy
 from scipy import stats
+import pandas as pd
 
 from src import get_cpp_result, get_rust_results, get_python_results
 from src.analyze_results import get_short_names, get_short_pc_names
@@ -14,10 +16,12 @@ result_path = "../results-archive"
 data_path = "../data"
 significance_alpha = 0.05
 
+long_names = list(get_short_names().keys())
+
 for pc_name in os.listdir(result_path):
 
     for uc_folder_name in os.listdir(f"{result_path}/{pc_name}/"):
-
+        dataframe_records = []
         results = {}
         results_mean = None
         for test_dir in os.listdir(f"{result_path}/{pc_name}/{uc_folder_name}/"):
@@ -46,6 +50,17 @@ for pc_name in os.listdir(result_path):
                     results[key].append(result[key])
                 else:
                     results[key] = [result[key]]
+
+            dataframe_records.append({
+                "file": int(test_dir),
+                **result
+            })
+
+
+        df = pd.DataFrame.from_records(dataframe_records)
+        df.sort_values(by="file", ascending=True, inplace=True)
+        csv_filename = f"{uc_folder_name}_{datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.csv"
+        df.to_csv(csv_filename, index=False)
 
         pos = []
         data = []
