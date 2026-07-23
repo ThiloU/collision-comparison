@@ -59,7 +59,8 @@ for pc_name in os.listdir(result_path):
 
         df = pd.DataFrame.from_records(dataframe_records)
         df.sort_values(by="file", ascending=True, inplace=True)
-        csv_filename = f"{uc_folder_name}_{datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.csv"
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        csv_filename = f"{uc_folder_name}_{timestamp}.csv"
         df.to_csv(csv_filename, index=False)
 
         pos = []
