@@ -38,7 +38,10 @@ int main(){
     const int cases_length = load_cases(path, &base_cases[0], 200);
 
     std::vector<FCLCase> fcl_cases(cases_length);
-    compare::FCL::get_cases(&base_cases[0], &fcl_cases[0], cases_length);
+    compare::FCL::get_cases(&base_cases[0], &fcl_cases[0], cases_length, false);
+
+    std::vector<FCLCase> fcl_cases_linear_support(cases_length);
+    compare::FCL::get_cases(&base_cases[0], &fcl_cases_linear_support[0], cases_length, true);
 
     std::vector<JoltCase> jolt_cases(cases_length);
     compare::Jolt::get_cases(&base_cases[0], &jolt_cases[0], cases_length);
@@ -57,7 +60,7 @@ int main(){
     std::cout << "\n\n";
 
     ankerl::nanobench::Bench bench;
-    bench.minEpochIterations(1000);
+    bench.minEpochIterations(10);
 
     bench.run("libccd intersection", [&] {
         for (int i = 0; i < cases_length; i++) {
@@ -74,6 +77,12 @@ int main(){
     bench.run("FCL distance", [&] {
         for (int i = 0; i < cases_length; i++) {
             compare::FCL::get_distance(fcl_cases[i]);
+        }
+    });
+
+    bench.run("FCL distance linear support", [&] {
+        for (int i = 0; i < cases_length; i++) {
+            compare::FCL::get_distance(fcl_cases_linear_support[i]);
         }
     });
 

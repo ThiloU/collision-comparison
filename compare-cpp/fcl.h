@@ -40,7 +40,7 @@ namespace compare::FCL {
     };
 
 
-    void get_cases(Case* base_cases, FCLCase* fcl_cases, int length);
+    void get_cases(Case* base_cases, FCLCase* fcl_cases, int length, bool use_linear_support);
     float get_distance(FCLCase& fcl_case);
 }
 
