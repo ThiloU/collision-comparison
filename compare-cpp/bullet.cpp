@@ -28,6 +28,8 @@ namespace compare::Bullet {
 
         if (collider.type == ColliderType::Cylinder){
             bullet_collider.cylinder = btCylinderShapeX(btVector3(get_radius(collider), 0.0 , get_height(collider) / 2));
+            // decrease collision margin from 4cm to 0.1mm to increase precision
+            bullet_collider.cylinder.setMargin(0.0001f);
             bullet_collider.shape = &bullet_collider.cylinder;
         }
 
@@ -54,6 +56,9 @@ namespace compare::Bullet {
             // unsure if this is even needed for our purposes,
             // but it's safer to just keep all the data structures up to date:
             bullet_collider.mesh.recalcLocalAabb();
+
+            // decrease collision margin from 4cm to 0.1mm to increase precision
+            bullet_collider.mesh.setMargin(0.0001f);
 
             bullet_collider.shape = &bullet_collider.mesh;
         }
@@ -100,7 +105,6 @@ namespace compare::Bullet {
 
     float get_distance(BulletCase& bullet_case) {
         btVoronoiSimplexSolver voronoiSimplexSolver = btVoronoiSimplexSolver();
-        btMinkowskiPenetrationDepthSolver convexPenetrationDepthSolver = btMinkowskiPenetrationDepthSolver();
 
         btDiscreteCollisionDetectorInterface::ClosestPointInput input;
         input.m_transformA = bullet_case.transform0;
@@ -111,9 +115,9 @@ namespace compare::Bullet {
 
         Draw draw = Draw();
 
-        btGjkPairDetector pairDetector = btGjkPairDetector(bullet_case.collider0.shape, bullet_case.collider1.shape, &voronoiSimplexSolver, &convexPenetrationDepthSolver);
+        btGjkPairDetector pairDetector = btGjkPairDetector(bullet_case.collider0.shape, bullet_case.collider1.shape, &voronoiSimplexSolver, nullptr);
         pairDetector.getClosestPointsNonVirtual(input, result, &draw);
 
-        return result.m_distance;
+        return result.m_hasResult ? result.m_distance : -1.0f;
     }
 }
