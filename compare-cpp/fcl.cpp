@@ -100,7 +100,7 @@ namespace compare::FCL {
         }
     }
 
-    void get_case(Collider collider0, Collider collider1, FCLCase& fcl_case, bool use_linear_support){
+    void get_case(Collider collider0, Collider collider1, FCLCase& fcl_case, bool force_linear_support_func){
 
         Transform3f transform0 = get_transform(collider0);
         Transform3f transform1 = get_transform(collider1);
@@ -108,16 +108,16 @@ namespace compare::FCL {
         get_collider(collider0, fcl_case.collider0);
         get_collider(collider1, fcl_case.collider1);
 
-        if (use_linear_support) {
+        if (force_linear_support_func) {
             fcl_case.mink_diff.linear_log_convex_threshold = INT32_MAX;
         }
         fcl_case.mink_diff.set(fcl_case.collider0.shape, fcl_case.collider1.shape, transform0, transform1);
     }
 
-    void get_cases(Case* base_cases, FCLCase* fcl_cases, int length, bool use_linear_support){
+    void get_cases(Case* base_cases, FCLCase* fcl_cases, int length, bool force_linear_support_func){
 
         for (int i = 0; i < length; i++) {
-            get_case(base_cases[i].collider0, base_cases[i].collider1, fcl_cases[i], use_linear_support);
+            get_case(base_cases[i].collider0, base_cases[i].collider1, fcl_cases[i], force_linear_support_func);
         }
     }
 
