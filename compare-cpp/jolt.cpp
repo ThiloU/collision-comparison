@@ -84,6 +84,7 @@ namespace compare::Jolt {
             auto result = new JPH::Shape::ShapeResult();
             auto mesh = new JPH::ConvexHullShape(mesh_settings, *result);
 
+            if (result->HasError()) { std::cerr << result->GetError() << std::endl;}
             jolt_collider.shape = mesh;
 
         }
