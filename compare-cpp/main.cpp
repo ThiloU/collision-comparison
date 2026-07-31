@@ -58,7 +58,10 @@ int main(){
     std::vector<OpenGJKCase> openGJK_cases(cases_length);
     compare::OpenGJK::get_cases(&base_cases[0], &openGJK_cases[0], cases_length);
 
-#undef  NDEBUG
+    std::vector<OpenGJKCase> openGJK_cases_lin_support(cases_length);
+    compare::OpenGJK::get_cases(&base_cases[0], &openGJK_cases_lin_support[0], cases_length);
+
+#define NDEBUG
 #ifdef NDEBUG
     std::cout << "\n\n";
 
@@ -103,16 +106,20 @@ int main(){
 
     bench.run("openGJK distance", [&] {
         for (int i = 0; i < cases_length; i++) {
-            compare::OpenGJK::get_distance(openGJK_cases[i]);
+            compare::OpenGJK::get_distance(openGJK_cases[i], false);
+        }
+    });
+
+    bench.run("openGJK distance linear support", [&] {
+        for (int i = 0; i < cases_length; i++) {
+            compare::OpenGJK::get_distance(openGJK_cases_lin_support[i], true);
         }
     });
 
     std::ofstream renderOut("./cpp_result.json");
     ankerl::nanobench::render(ankerl::nanobench::templates::json(), bench, renderOut);
 
-	// return 0;
-#endif
-
+#else
     for (int i = 0; i < cases_length; i++) {
 
         float base_distance = compare::Base::get_distance(&base_cases[i]);
@@ -120,7 +127,8 @@ int main(){
         float fcl_distance = compare::FCL::get_distance(fcl_cases[i]);
         float fcl_distance_lin_supp = compare::FCL::get_distance(fcl_cases_lin_support[i]);
         float bullet_distance = compare::Bullet::get_distance(bullet_cases[i]);
-        float openGJK_distance = compare::OpenGJK::get_distance(openGJK_cases[i]);
+        float openGJK_distance = compare::OpenGJK::get_distance(openGJK_cases[i], false);
+        float openGJK_distance_lin_supp = compare::OpenGJK::get_distance(openGJK_cases_lin_support[i], true);
 
         bool libccd_intersect = compare::libccd::get_intersection(libccd_cases[i]);
         bool libccd_intersect_lin_supp = compare::libccd::get_intersection(libccd_cases_lin_support[i]);
@@ -129,16 +137,18 @@ int main(){
         std::cout << "\n\n--===[ Case  " << i << " ]===--\n"
         << "[Reference] distance3d Distance: " << base_distance << "\n"
         << "Intersection Algorithms:" << "\n"
-        << "\tlibccd            Intersect: " << libccd_intersect << "\n"
-        << "\tlibccd (lin sup.) Intersect: " << libccd_intersect_lin_supp << "\n"
-        << "\tJolt              Intersect: " << jolt_intersect << "\n"
+        << "\tlibccd                Intersect: " << libccd_intersect << "\n"
+        << "\tlibccd (lin supp.)    Intersect: " << libccd_intersect_lin_supp << "\n"
+        << "\tJolt                  Intersect: " << jolt_intersect << "\n"
         << "Distance Algorithms:" << "\n"
-        << "\tFCL               Distance: " << fcl_distance << "\n"
-        << "\tFCL (lin sup.)    Distance: " << fcl_distance_lin_supp << "\n"
-        << "\tBullet            Distance: " << bullet_distance  << "\n"
-        << "\topenGJK           Distance: " << openGJK_distance << "\n";
+        << "\tFCL                   Distance: " << fcl_distance << "\n"
+        << "\tFCL (lin supp.)       Distance: " << fcl_distance_lin_supp << "\n"
+        << "\tBullet                Distance: " << bullet_distance  << "\n"
+        << "\tOpenGJK               Distance: " << openGJK_distance << "\n"
+        << "\tOpenGJK (lin supp.)   Distance: " << openGJK_distance_lin_supp << "\n";
 
     }
+#endif
 
     return 0;
 }

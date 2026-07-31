@@ -130,13 +130,13 @@ namespace compare::OpenGJK {
         }
     }
 
-    float get_distance(const OpenGJKCase& openGJK_case) {
+    float get_distance(const OpenGJKCase& openGJK_case, bool force_linear_support_func) {
         /* Initialize simplex as empty */
         gkSimplex s;
         s.nvrtx = 0;
 
         /* Compute distance */
-        const gkFloat dd = compute_minimum_distance(openGJK_case.collider0.collider, openGJK_case.collider1.collider, &s);
+        const gkFloat dd = compute_minimum_distance(openGJK_case.collider0, openGJK_case.collider1, &s, force_linear_support_func);
 
         return static_cast<float>(dd);
     }

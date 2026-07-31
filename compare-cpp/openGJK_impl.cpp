@@ -610,9 +610,9 @@ inline static void S3D(gkSimplex* s, gkFloat* v) {
   }
 }
 
-inline static void support(gkBody* restrict body,
-                           const gkFloat* restrict v) {
-  switch (body->type) {
+inline static void support(OpenGJKCollider& restrict body,
+                           const gkFloat* restrict v, bool force_linear_support_func) {
+  switch (body.collider.type) {
     case Sphere:
       support_sphere(body, v);
       break;
@@ -626,7 +626,11 @@ inline static void support(gkBody* restrict body,
       support_box(body, v);
       break;
     case Mesh:
+    if (force_linear_support_func) {
+      support_mesh_linear(body, v);
+    } else {
       support_mesh(body, v);
+    }
       break;
     default:
       printf("Error: OpenGJK tried to get support mapping for unknown body type\n");
@@ -943,8 +947,8 @@ inline static void compute_witnesses(const gkBody* bd1,
   }
 }
 
-gkFloat compute_minimum_distance(gkBody bd1, gkBody bd2,
-                                 gkSimplex* restrict s) {
+gkFloat compute_minimum_distance(OpenGJKCollider bd1, OpenGJKCollider bd2,
+                                 gkSimplex* restrict s, bool force_linear_support_func) {
   unsigned int k = 0;
   const int mk = GJK_MAX_ITERATIONS;
   const gkFloat eps_rel = GJK_EPSILON_REL;
@@ -961,19 +965,19 @@ gkFloat compute_minimum_distance(gkBody bd1, gkBody bd2,
   //TODO: implement better guess for initial search direction?
   const gkFloat initial_v[3] = {0, 0, 1};
   const gkFloat initial_v_minus[3] = {0, 0, -1};
-  support(&bd1, initial_v);
-  support(&bd2, initial_v_minus);
-  v[0] = bd1.s[0] - bd2.s[0];
-  v[1] = bd1.s[1] - bd2.s[1];
-  v[2] = bd1.s[2] - bd2.s[2];
+  support(bd1, initial_v, force_linear_support_func);
+  support(bd2, initial_v_minus, force_linear_support_func);
+  v[0] = bd1.collider.s[0] - bd2.collider.s[0];
+  v[1] = bd1.collider.s[1] - bd2.collider.s[1];
+  v[2] = bd1.collider.s[2] - bd2.collider.s[2];
 
   /* Initialise simplex */
   s->nvrtx = 1;
   for (int t = 0; t < 3; ++t) {
     s->vrtx[0][t] = v[t];
 
-    s->vrtx_points[0][0][t] = bd1.s[t];
-    s->vrtx_points[0][1][t] = bd2.s[t];
+    s->vrtx_points[0][0][t] = bd1.collider.s[t];
+    s->vrtx_points[0][1][t] = bd2.collider.s[t];
   }
 
   /* Begin GJK iteration */
@@ -986,10 +990,10 @@ gkFloat compute_minimum_distance(gkBody bd1, gkBody bd2,
     }
 
     /* Support function */
-    support(&bd1, vminus);
-    support(&bd2, v);
+    support(bd1, vminus, force_linear_support_func);
+    support(bd2, v, force_linear_support_func);
     for (int t = 0; t < 3; ++t) {
-      w[t] = bd1.s[t] - bd2.s[t];
+      w[t] = bd1.collider.s[t] - bd2.collider.s[t];
     }
 
     /* Test first exit condition (new point already in simplex/can't move
@@ -1008,8 +1012,8 @@ gkFloat compute_minimum_distance(gkBody bd1, gkBody bd2,
     i = s->nvrtx;
     for (int t = 0; t < 3; ++t) {
       s->vrtx[i][t] = w[t];
-      s->vrtx_points[i][0][t] = bd1.s[t];
-      s->vrtx_points[i][1][t] = bd2.s[t];
+      s->vrtx_points[i][0][t] = bd1.collider.s[t];
+      s->vrtx_points[i][1][t] = bd2.collider.s[t];
     }
     s->nvrtx++;
 
@@ -1036,7 +1040,7 @@ gkFloat compute_minimum_distance(gkBody bd1, gkBody bd2,
         " * * * * * * * * * * * * * * \n");
   }
 
-  compute_witnesses(&bd1, &bd2, s);
+  compute_witnesses(&bd1.collider, &bd2.collider, s);
   return sqrt(norm2(v));
 }
 

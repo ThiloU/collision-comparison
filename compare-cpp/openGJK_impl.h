@@ -43,9 +43,6 @@
                            need a definition here */
 #endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 /*! @brief Precision of floating-point numbers.
  *
@@ -58,6 +55,13 @@ extern "C" {
 #define gkFloat   double
 #define gkEpsilon DBL_EPSILON
 #endif
+
+#include "vector"
+
+struct MeshAdjacency {
+    std::vector<unsigned int> neighbor_offsets;
+    std::vector<unsigned int> neighbors;
+};
 
 typedef enum {
     Sphere,
@@ -99,6 +103,12 @@ typedef struct gkBody_ {
                         these coordinates. */
 } gkBody;
 
+struct OpenGJKCollider {
+    gkBody collider;
+    MeshAdjacency adjacency;
+    mutable unsigned int last_support_vertex = 0;
+};
+
 /*! @brief Data structure for simplex.
  *
  * The simplex is updated at each GJK-iteration. For the first iteration this
@@ -124,13 +134,16 @@ typedef struct gkSimplex_ {
  * @param[in,out] s    Simplex structure. Must be initialized (set nvrtx = 0)
  *                     before first call. After return, contains the final
  *                     simplex and witness points in s->witnesses.
+ * @param[in]     force_linear_support_func Forces the algorithm to use the
+ *                     slower, linear, support function for meshes instead of the logarithmic one.
+ *                     Is used for benchmark purposes.
  * @return The minimum Euclidean distance between the two polytopes.
  *         Returns 0 if the polytopes are intersecting or touching.
  *
  * @note The simplex has to be initialised prior the call to this function.
  *       Witness points are automatically computed and stored in s->witnesses.
  */
-OPENGJK_EXPORT gkFloat compute_minimum_distance(gkBody bd1, gkBody bd2, gkSimplex* s);
+OPENGJK_EXPORT gkFloat compute_minimum_distance(OpenGJKCollider bd1, OpenGJKCollider bd2, gkSimplex* s, bool force_linear_support_func);
 
 /*! @brief Testing wrappers - expose internal functions for cross-validation.
  *
@@ -144,8 +157,5 @@ OPENGJK_EXPORT void opengjk_test_S1D(gkSimplex* s, gkFloat* v);
 OPENGJK_EXPORT void opengjk_test_S2D(gkSimplex* s, gkFloat* v);
 OPENGJK_EXPORT void opengjk_test_S3D(gkSimplex* s, gkFloat* v);
 
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* OPENGJK_H__ */
