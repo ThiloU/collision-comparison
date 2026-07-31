@@ -8,7 +8,7 @@ def get_cpp_result(path):
         with open(f"{path}/cpp_result.json") as f:
             result = json.load(f)  # in seconds
     except FileNotFoundError:
-        warnings.warn(f"No results found under {path}")
+        warnings.warn(f"No C++ results found under {path}")
         return {}
 
     data = {}
@@ -25,7 +25,7 @@ def get_python_results(path):
         with open(f"{path}/distance3d_result.json") as f:
             distance3d_result = json.load(f)
     except FileNotFoundError:
-        warnings.warn(f"No results found under {path}")
+        warnings.warn(f"No python[distance3d] results found under {path}")
         return {}
 
     data = {}
@@ -37,7 +37,7 @@ def get_python_results(path):
         with open(f"{path}/pybullet_result.json") as f:
             pybullet_result = json.load(f)
     except FileNotFoundError:
-        warnings.warn(f"No results found under {path}")
+        warnings.warn(f"No python[pybullet] results found under {path}")
         return {}
 
     for name in pybullet_result:
@@ -52,7 +52,7 @@ def get_rust_results(path):
 
     path = f"{path}criterion"
     if not os.path.exists(path):
-        warnings.warn(f"No results found under {path}")
+        warnings.warn(f"No rust results found under {path}")
         return {}
     for dir in os.listdir(path):
         if dir == "report":
@@ -62,7 +62,7 @@ def get_rust_results(path):
             with open(f"{path}/{dir}/new/estimates.json") as f:
                 result = json.load(f)  # in ns
         except FileNotFoundError:
-            warnings.warn(f"No results found under {path}")
+            warnings.warn(f"No rust results found under {path}")
             return {}
 
         median = result["mean"]["point_estimate"] / 1000

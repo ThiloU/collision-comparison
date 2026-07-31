@@ -159,6 +159,7 @@ namespace compare::libccd {
         assert(Base::get_vertex_count(collider) >= 1);
 
         unsigned int vertex_count = (unsigned int) Base::get_vertex_count(collider);
+        // initialize the "current" vertex using the result of the previous invocation, or 0 if the last result is invalid
         unsigned int current = wrapper->last_support_vertex < vertex_count ? wrapper->last_support_vertex : 0;
         float current_score = glm::dot(collider.vertecies[current], local_dir);
 
@@ -172,6 +173,7 @@ namespace compare::libccd {
             unsigned int begin = neighbor_offsets[current];
             unsigned int end   = neighbor_offsets[current + 1];
 
+            // iterate through all neighbors of the "current" vertex and find the neighbor with the highest dot product
             for (unsigned int i = begin; i < end; i++) {
                 unsigned int neighbor = neighbors[i];
                 float score = glm::dot(collider.vertecies[neighbor], local_dir);
