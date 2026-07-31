@@ -14,8 +14,8 @@ add_executable(compare
         collider.cpp
         libccd.cpp
         openGJK.cpp
-        openGJK_impl.c
-        support_mappings.c
+        openGJK_impl.cpp
+        support_mappings.cpp
 )
 
 include_directories(/usr/include/assimp)
