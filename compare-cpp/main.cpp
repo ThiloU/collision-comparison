@@ -52,6 +52,9 @@ int main(){
     std::vector<JoltCase> jolt_cases(cases_length);
     compare::Jolt::get_cases(&base_cases[0], &jolt_cases[0], cases_length);
 
+    std::vector<JoltCase> jolt_cases_dist(cases_length);
+    compare::Jolt::get_cases(&base_cases[0], &jolt_cases_dist[0], cases_length);
+
     std::vector<BulletCase> bullet_cases(cases_length);
     compare::Bullet::get_cases(&base_cases[0], &bullet_cases[0], cases_length);
 
@@ -89,6 +92,12 @@ int main(){
     bench.run("Jolt intersection", [&] {
         for (int i = 0; i < cases_length; i++) {
             compare::Jolt::get_intersection(jolt_cases[i]);
+        }
+    });
+
+    bench.run("Jolt distance", [&] {
+        for (int i = 0; i < cases_length; i++) {
+            compare::Jolt::get_distance(jolt_cases_dist[i]);
         }
     });
 
@@ -138,33 +147,24 @@ int main(){
     ankerl::nanobench::render(ankerl::nanobench::templates::json(), bench, renderOut);
 
 #else
-    for (int i = 0; i < cases_length; i++) {
-
-        float base_distance = compare::Base::get_distance(&base_cases[i]);
-
-        float fcl_distance = compare::FCL::get_distance(fcl_cases[i]);
-        float fcl_distance_lin_supp = compare::FCL::get_distance(fcl_cases_lin_support[i]);
-        float bullet_distance = compare::Bullet::get_distance(bullet_cases[i]);
-        float openGJK_distance = compare::OpenGJK::get_distance(openGJK_cases[i], false);
-        float openGJK_distance_lin_supp = compare::OpenGJK::get_distance(openGJK_cases_lin_support[i], true);
-
-        bool libccd_intersect = compare::libccd::get_intersection(libccd_cases[i]);
-        bool libccd_intersect_lin_supp = compare::libccd::get_intersection(libccd_cases_lin_support[i]);
-        bool jolt_intersect   = compare::Jolt::get_intersection(jolt_cases[i]);
-
-        std::cout << "\n\n--===[ Case  " << i << " ]===--\n"
-        << "[Reference] distance3d Distance: " << base_distance << "\n"
+    for (int i = 0; i < cases_length; i++)
+    {
+        std::cout
+        << "\n\n--===[ Case  " << i << " ]===--\n"
+        << "[Reference] distance3d Distance: " << compare::Base::get_distance(&base_cases[i]) << "\n"
         << "Intersection Algorithms:" << "\n"
-        << "\tlibccd                Intersect: " << libccd_intersect << "\n"
-        << "\tlibccd (lin supp.)    Intersect: " << libccd_intersect_lin_supp << "\n"
-        << "\tJolt                  Intersect: " << jolt_intersect << "\n"
+        << "\tlibccd                Intersect: " << compare::libccd::get_intersection(libccd_cases[i]) << "\n"
+        << "\tlibccd (lin supp.)    Intersect: " << compare::libccd::get_intersection(libccd_cases_lin_support[i]) << "\n"
+        << "\tHPP-FCL               Intersect: " << compare::FCL::get_intersection(fcl_cases_intersection[i]) << "\n"
+        << "\tHPP-FCL (lin supp.)   Intersect: " << compare::FCL::get_intersection(fcl_cases_intersection_lin_support[i]) << "\n"
+        << "\tJolt                  Intersect: " << compare::Jolt::get_intersection(jolt_cases[i]) << "\n"
         << "Distance Algorithms:" << "\n"
-        << "\tFCL                   Distance: " << fcl_distance << "\n"
-        << "\tFCL (lin supp.)       Distance: " << fcl_distance_lin_supp << "\n"
-        << "\tBullet                Distance: " << bullet_distance  << "\n"
-        << "\tOpenGJK               Distance: " << openGJK_distance << "\n"
-        << "\tOpenGJK (lin supp.)   Distance: " << openGJK_distance_lin_supp << "\n";
-
+        << "\tHPP-FCL               Distance: " << compare::FCL::get_distance(fcl_cases[i]) << "\n"
+        << "\tHPP-FCL (lin supp.)   Distance: " << compare::FCL::get_distance(fcl_cases_lin_support[i]) << "\n"
+        << "\tBullet                Distance: " << compare::Bullet::get_distance(bullet_cases[i]) << "\n"
+        << "\tJolt Distance         Distance: " << compare::Jolt::get_distance(jolt_cases_dist[i]) << "\n"
+        << "\tOpenGJK               Distance: " << compare::OpenGJK::get_distance(openGJK_cases[i], false) << "\n"
+        << "\tOpenGJK (lin supp.)   Distance: " << compare::OpenGJK::get_distance(openGJK_cases_lin_support[i], true) << "\n";
     }
 #endif
 
