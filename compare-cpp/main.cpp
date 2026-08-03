@@ -43,6 +43,12 @@ int main(){
     std::vector<FCLCase> fcl_cases_lin_support(cases_length);
     compare::FCL::get_cases(&base_cases[0], &fcl_cases_lin_support[0], cases_length, true);
 
+    std::vector<FCLCase> fcl_cases_intersection(cases_length);
+    compare::FCL::get_cases(&base_cases[0], &fcl_cases_intersection[0], cases_length, false);
+
+    std::vector<FCLCase> fcl_cases_intersection_lin_support(cases_length);
+    compare::FCL::get_cases(&base_cases[0], &fcl_cases_intersection_lin_support[0], cases_length, true);
+
     std::vector<JoltCase> jolt_cases(cases_length);
     compare::Jolt::get_cases(&base_cases[0], &jolt_cases[0], cases_length);
 
@@ -95,6 +101,18 @@ int main(){
     bench.run("FCL distance linear support", [&] {
         for (int i = 0; i < cases_length; i++) {
             compare::FCL::get_distance(fcl_cases_lin_support[i]);
+        }
+    });
+
+    bench.run("FCL intersection", [&] {
+        for (int i = 0; i < cases_length; i++) {
+            compare::FCL::get_intersection(fcl_cases_intersection[i]);
+        }
+    });
+
+    bench.run("FCL intersection linear support", [&] {
+        for (int i = 0; i < cases_length; i++) {
+            compare::FCL::get_intersection(fcl_cases_intersection_lin_support[i]);
         }
     });
 

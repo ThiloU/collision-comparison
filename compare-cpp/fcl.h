@@ -42,6 +42,7 @@ namespace compare::FCL {
 
     void get_cases(Case* base_cases, FCLCase* fcl_cases, int length, bool force_linear_support_func);
     float get_distance(FCLCase& fcl_case);
+    bool get_intersection(FCLCase& fcl_case);
 }
 
 

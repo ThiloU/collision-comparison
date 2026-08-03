@@ -132,14 +132,31 @@ namespace compare::FCL {
         support_func_guess_t init_support_guess;
         init_support_guess.setZero();
 
-        // Evaluate both solvers twice, make sure they give the same solution
         GJK::Status res_gjk = gjk.evaluate(fcl_case.mink_diff, init_guess, init_support_guess);
 
-        // std::cout << "gjk iterations:\n" << gjk.getIterations() << "\n";
-
-        // std::cout << "gjk dist:\n" << gjk.distance << "\n";
-
+        if (res_gjk  == GJK::Status::Failed){
+            std::cerr << "HPP-FCL failed to converge while calculating distance" << std::endl;
+        }
         return  gjk.distance;
+    }
+
+    bool get_intersection(FCLCase& fcl_case){
+        unsigned int max_iterations = 128;
+        FCL_REAL tolerance = 1e-6;
+        GJK gjk(max_iterations, tolerance);
+        gjk.gjk_variant = GJKVariant::NesterovAcceleration;
+        gjk.setDistanceEarlyBreak(0);   // if the distance was proven to be more than 0, exit early
+
+        Vec3f init_guess = Vec3f(1, 0, 0);
+        support_func_guess_t init_support_guess;
+        init_support_guess.setZero();
+
+        GJK::Status res_gjk = gjk.evaluate(fcl_case.mink_diff, init_guess, init_support_guess);
+
+        if (res_gjk  == GJK::Status::Failed){
+            std::cerr << "HPP-FCL failed to converge while calculating intersection" << std::endl;
+        }
+        return res_gjk == GJK::Status::Inside;
     }
 }
 
