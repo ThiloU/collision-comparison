@@ -2,9 +2,12 @@ import json
 import os
 import sys
 from pathlib import Path
+
+import trimesh
 from numpy import ndarray
 
 from scipy.spatial import ConvexHull
+from trimesh import Trimesh
 
 import distance3d.colliders
 import numpy as np
@@ -117,7 +120,24 @@ def write_mesh_file(collider: MeshGraph, file_name: str, save_path: str):
             # indices in the .obj file format start at 1, therefore increment all indices first:
             f.write("f {} {} {}\n".format(triangle[0]+1, triangle[1]+1, triangle[2]+1))
 
-def write_test_file(cases, save_path: str, file_name: str):
+
+def simplify_mesh(collider: MeshGraph, max_num_points):
+    # Use Euler's formula to approximately convert from max. number of points to the corresponding number of faces.
+    # If the mesh is already simple enough, use the existing number of faces as target value
+    max_num_faces = min(max(4, 2 * max_num_points - 4), len(collider.triangles))
+    mesh = trimesh.Trimesh(vertices=collider.vertices, faces=collider.triangles, process=True, validate=True)
+
+    # On default settings, trimesh will sometimes not simplify the mesh down to the specified number of faces.
+    # In that case, increase the 'aggression' value until it works
+    simplified: Trimesh = Trimesh()
+    for agg in range(0, 11):
+        simplified = mesh.simplify_quadric_decimation(face_count=max_num_faces, aggression=agg)
+        if len(simplified.faces) <= max_num_faces:
+            break
+
+    return MeshGraph(collider.mesh2origin, simplified.vertices, simplified.faces)
+
+def write_test_file(cases, save_path: str, file_name: str, hull_max_vertices: int | None = None):
     shapes = []
     subdirectory_name = save_path.split("/")[-1]
     i = 0
@@ -131,10 +151,14 @@ def write_test_file(cases, save_path: str, file_name: str):
 
         if type(collider0) == MeshGraph:
             collider0 = convert_to_convex_hull_collider(collider0)
+            if hull_max_vertices is not None:
+                collider0 = simplify_mesh(collider0, hull_max_vertices)
             write_mesh_file(collider0, collider0_name, save_path + "/meshes")
 
         if type(collider1) == MeshGraph:
             collider1 = convert_to_convex_hull_collider(collider1)
+            if hull_max_vertices is not None:
+                collider1 = simplify_mesh(collider1, hull_max_vertices)
             write_mesh_file(collider1, collider1_name, save_path + "/meshes")
 
         distance, _, _, _ = gjk(collider0, collider1)
