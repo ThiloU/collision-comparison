@@ -6,6 +6,7 @@ source /opt/miniconda/bin/activate collision_env
 # temporary: better move this to the Dockerfile
 apt update -y
 apt install -y unzip
+pip install open3d
 
 mkdir -p results
 
