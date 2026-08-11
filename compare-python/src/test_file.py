@@ -3,11 +3,10 @@ import os
 import sys
 from pathlib import Path
 
-import trimesh
+import open3d as o3d
 from numpy import ndarray
 
 from scipy.spatial import ConvexHull
-from trimesh import Trimesh
 
 import distance3d.colliders
 import numpy as np
@@ -125,17 +124,24 @@ def simplify_mesh(collider: MeshGraph, max_num_points):
     # Use Euler's formula to approximately convert from max. number of points to the corresponding number of faces.
     # If the mesh is already simple enough, use the existing number of faces as target value
     max_num_faces = min(max(4, 2 * max_num_points - 4), len(collider.triangles))
-    mesh = trimesh.Trimesh(vertices=collider.vertices, faces=collider.triangles, process=True, validate=True)
 
-    # On default settings, trimesh will sometimes not simplify the mesh down to the specified number of faces.
-    # In that case, increase the 'aggression' value until it works
-    simplified: Trimesh = Trimesh()
-    for agg in range(0, 11):
-        simplified = mesh.simplify_quadric_decimation(face_count=max_num_faces, aggression=agg)
-        if len(simplified.faces) <= max_num_faces:
-            break
+    # Convert collider into open3d mesh
+    mesh = o3d.geometry.TriangleMesh()
+    mesh.vertices = o3d.utility.Vector3dVector(collider.vertices)
+    mesh.triangles = o3d.utility.Vector3iVector(collider.triangles)
+    mesh.remove_duplicated_vertices()
+    mesh.remove_degenerate_triangles()
 
-    return MeshGraph(collider.mesh2origin, simplified.vertices, simplified.faces)
+    simplified: o3d.cuda.pybind.geometry.TriangleMesh = mesh.simplify_quadric_decimation(
+        target_number_of_triangles=max_num_faces
+    )
+    simplified.remove_duplicated_vertices()
+    simplified.remove_unreferenced_vertices()
+
+    if len(simplified.triangles) > max_num_faces:
+        print(f"Warning: Failed to simplify mesh. Should have {max_num_faces}, but still has {len(simplified.triangles)} faces")
+
+    return MeshGraph(collider.mesh2origin, np.asarray(simplified.vertices), np.asarray(simplified.triangles))
 
 def write_test_file(cases, save_path: str, file_name: str, hull_max_vertices: int | None = None):
     shapes = []
