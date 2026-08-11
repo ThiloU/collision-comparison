@@ -74,10 +74,16 @@ def get_rust_results(path):
 def get_short_names():
     return {
         "FCL distance": "HPP-FCL",
-        "Jolt intersection": "Jolt",
+        "FCL distance linear support": "HPP-FCL lin supp.",
+        "FCL intersection": "HPP-FCL inter",
+        "FCL intersection linear support": "HPP-FCL inter lin supp.",
+        "Jolt intersection": "Jolt inter",
+        "Jolt distance": "Jolt",
         "libccd intersection": "libccd",
+        "libccd intersection linear support": "libccd lin. supp.",
         "Bullet distance": "Bullet",
         "openGJK distance": "openGJK",
+        "openGJK distance linear support": "openGJK lin supp.",
 
         "ncollide_distance": "ncollide",
         "collision-rs_nasterov_gjk": "collision-rs nest",
