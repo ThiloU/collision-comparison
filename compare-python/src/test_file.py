@@ -143,7 +143,7 @@ def simplify_mesh(collider: MeshGraph, max_num_points):
 
     return MeshGraph(collider.mesh2origin, np.asarray(simplified.vertices), np.asarray(simplified.triangles))
 
-def write_test_file(cases, save_path: str, file_name: str, hull_max_vertices: int | None = None):
+def write_test_file(cases, save_path: str, file_name: str, hull_max_vertices: int | None = None, clean_collider_names = True):
     shapes = []
     subdirectory_name = save_path.split("/")[-1]
     i = 0
@@ -151,9 +151,13 @@ def write_test_file(cases, save_path: str, file_name: str, hull_max_vertices: in
         print("Case: ", i)
 
         collider0 = case[0][1]
-        collider0_name = clean_collider_name(case[0][0])
         collider1 = case[1][1]
-        collider1_name = clean_collider_name(case[1][0])
+        if clean_collider_names:
+            collider0_name = clean_collider_name(case[0][0])
+            collider1_name = clean_collider_name(case[1][0])
+        else:
+            collider0_name = case[0][0]
+            collider1_name = case[1][0]
 
         if type(collider0) == MeshGraph:
             collider0 = convert_to_convex_hull_collider(collider0)

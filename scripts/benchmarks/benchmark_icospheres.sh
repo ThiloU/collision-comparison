@@ -1,0 +1,31 @@
+#!/bin/bash
+
+until [ $i -gt 979 ]
+do
+  echo i: $i
+  ((i=i+1))
+
+   if [ ! -d "results/$i" ]; then
+
+    rm -f "data/current.json"
+    ln -s "icospheres_of_different_vertex_counts/icospheres_of_different_vertex_counts_$i.json" "data/current.json"
+
+    echo --- CPP ---
+    bash scripts/benchmarks/benchmark_cpp.sh
+
+    echo --- RUST ---
+    bash scripts/benchmarks/benchmark_rust.sh
+
+    echo --- Python ---
+    bash scripts/benchmarks/benchmark_python.sh
+
+    echo --- Copy Result ---
+    mkdir "results/$i"
+    cp "compare-python/pybullet_result.json" "results/$i/";
+    cp "compare-python/distance3d_result.json" "results/$i/";
+    cp "compare-cpp/cpp_result.json" "results/$i/";
+    cp -a "compare-rs/target/criterion" "results/$i/";
+   fi
+done
+
+
