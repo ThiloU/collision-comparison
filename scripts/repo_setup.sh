@@ -11,9 +11,23 @@ pip install open3d
 mkdir -p results
 
 if [ ! -d "data/complex_env_dual_arm_collision" ]; then
-  echo "Unzipping benchmark data..."
+  echo "Unzipping main benchmark data..."
   cd data \
     && unzip -q complex_env_dual_arm_collision.zip \
+    && cd ..
+fi
+
+if [ ! -d "data/complex_env_dual_arm_collision_max256verts" ]; then
+  echo "Unzipping benchmark data for simplified meshes..."
+  cd data \
+    && unzip -q complex_env_dual_arm_collision_max256verts.zip \
+    && cd ..
+fi
+
+if [ ! -d "data/icospheres_of_different_vertex_counts" ]; then
+  echo "Unzipping benchmark data for icospheres of different vertex counts..."
+  cd data \
+    && unzip -q icospheres_of_different_vertex_counts.zip \
     && cd ..
 fi
 
