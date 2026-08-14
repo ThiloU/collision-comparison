@@ -73,3 +73,6 @@ mkdir -p compare-cpp/build_release/ \
  && bash scripts/compile/compile_compare_release.sh
 
 rm -rf compare-rs/target
+
+# distance3d still uses np.row_stack, which was removed in numpy 2.5. As a workaround, pin the numpy version to 2.4:
+pip install numpy==2.4
