@@ -1,9 +1,9 @@
 #!/bin/bash
 
-until [ $i -gt 979 ]
+i=0
+until [ $i -gt 1999 ]
 do
   echo i: $i
-  ((i=i+1))
 
    if [ ! -d "results/$i" ]; then
 
@@ -26,6 +26,8 @@ do
     cp "compare-cpp/cpp_result.json" "results/$i/";
     cp -a "compare-rs/target/criterion" "results/$i/";
    fi
+  ((i=i+1))
+
 done
 
 
