@@ -31,6 +31,13 @@ if [ ! -d "data/icospheres_of_different_vertex_counts" ]; then
     && cd ..
 fi
 
+if [ ! -d "data/icospheres_of_different_high_vertex_counts" ]; then
+  echo "Unzipping benchmark data for icospheres of high vertex counts..."
+  cd data \
+    && unzip -q icospheres_of_different_high_vertex_counts.zip \
+    && cd ..
+fi
+
 # Clone algorithms not already in repo:
 git clone https://github.com/MaartenBehn/JoltPhysics.git
 git clone https://github.com/danfis/libccd.git

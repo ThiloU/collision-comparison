@@ -21,10 +21,10 @@ def rand_unit_vector():
     return np.array([k*np.cos(theta), k*np.sin(theta), y])
 
 
-subdirectory_name = "../data/icospheres_of_different_vertex_counts"
+subdirectory_name = "../data/icospheres_of_different_high_vertex_counts"
 os.makedirs(subdirectory_name + "/meshes", exist_ok=True)
 
-num_random_poses_per_vertex_count = 200
+num_random_poses_per_vertex_count = 100
 icosphere_radius = 0.5
 i = 0
 
@@ -33,8 +33,8 @@ random.seed(42)
 rng = np.random.default_rng(42)
 
 
-# this range contains 10 face counts from 10 to 316228:
-face_counts = np.round(10 ** np.arange(1,6, step=0.5)).astype(int)
+# this range contains 20 face counts linearly from 50_000 to 1_000_000:
+face_counts = np.arange(50_000, 1_050_000, step=50_000).astype(int)
 
 # create an icosphere with enough faces so we can simplify it to create the icospheres with the desired face counts:
 
@@ -85,5 +85,12 @@ for face_count in face_counts:
         cases = [((f"icosphere_{face_count}faces", collider0), (f"icosphere_{face_count}faces", collider1))]
 
         print(i)
-        write_test_file(cases, subdirectory_name, f"icospheres_of_different_vertex_counts_{i}.json", clean_collider_names=False)
+        write_test_file(
+            cases,
+            subdirectory_name,
+            f"icospheres_of_different_high_vertex_counts{i}.json",
+            clean_collider_names=False,
+            omit_reference_distance=True,
+            compute_convex_hulls=False,
+        )
         i += 1

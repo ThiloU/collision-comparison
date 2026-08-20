@@ -143,7 +143,25 @@ def simplify_mesh(collider: MeshGraph, max_num_points):
 
     return MeshGraph(collider.mesh2origin, np.asarray(simplified.vertices), np.asarray(simplified.triangles))
 
-def write_test_file(cases, save_path: str, file_name: str, hull_max_vertices: int | None = None, clean_collider_names = True):
+def write_test_file(cases, save_path: str, file_name: str,
+                    hull_max_vertices: int | None = None,
+                    clean_collider_names = True,
+                    omit_reference_distance = False,
+                    compute_convex_hulls = True
+                    ):
+    """
+    :param cases: The benchmark cases to save.
+    :param save_path: The directory to save the test cases into.
+    :param file_name: The file name of the current case file.
+    :param hull_max_vertices: When using convex hull colliders,
+    sets a maximum number of vertices to simplify the hull down to.
+    :param clean_collider_names: Whether to clean the collider names,
+    intended to be used if the collider names are taken from a URDF and still have some pre-/suffixes.
+    :param omit_reference_distance: Whether to include a reference distance in the JSON file.
+    Useful when handling very large meshes for which the distance would take a long time to compute.
+    :param compute_convex_hulls: Whether the convex hulls should be computed.
+    Set this to false if the meshes are already convex.
+    """
     shapes = []
     subdirectory_name = save_path.split("/")[-1]
     i = 0
@@ -160,18 +178,23 @@ def write_test_file(cases, save_path: str, file_name: str, hull_max_vertices: in
             collider1_name = case[1][0]
 
         if type(collider0) == MeshGraph:
-            collider0 = convert_to_convex_hull_collider(collider0)
+            if compute_convex_hulls:
+                collider0 = convert_to_convex_hull_collider(collider0)
             if hull_max_vertices is not None:
                 collider0 = simplify_mesh(collider0, hull_max_vertices)
             write_mesh_file(collider0, collider0_name, save_path + "/meshes")
 
         if type(collider1) == MeshGraph:
-            collider1 = convert_to_convex_hull_collider(collider1)
+            if compute_convex_hulls:
+                collider1 = convert_to_convex_hull_collider(collider1)
             if hull_max_vertices is not None:
                 collider1 = simplify_mesh(collider1, hull_max_vertices)
             write_mesh_file(collider1, collider1_name, save_path + "/meshes")
 
-        distance, _, _, _ = gjk(collider0, collider1)
+        if omit_reference_distance:
+            distance = -999
+        else:
+            distance, _, _, _ = gjk(collider0, collider1)
         data = {
             "case": i,
             "collider1": to_dict(collider0, subdirectory_name + "/meshes/" + collider0_name + ".obj"),
