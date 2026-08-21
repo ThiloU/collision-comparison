@@ -8,7 +8,7 @@ do
    if [ ! -d "results/$i" ]; then
 
     rm -f "data/current.json"
-    ln -s "icospheres_of_different_high_vertex_counts/icospheres_of_different_high_vertex_counts_$i.json" "data/current.json"
+    ln -s "icospheres_of_different_high_vertex_counts/icospheres_of_different_high_vertex_counts$i.json" "data/current.json"
 
     echo --- CPP ---
     bash scripts/benchmarks/benchmark_cpp.sh
