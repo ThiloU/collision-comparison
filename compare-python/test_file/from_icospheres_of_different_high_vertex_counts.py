@@ -24,7 +24,7 @@ def rand_unit_vector():
 subdirectory_name = "../data/icospheres_of_different_high_vertex_counts"
 os.makedirs(subdirectory_name + "/meshes", exist_ok=True)
 
-num_random_poses_per_vertex_count = 100
+num_random_poses_per_vertex_count = 40
 icosphere_radius = 0.5
 i = 0
 
@@ -88,9 +88,8 @@ for face_count in face_counts:
         write_test_file(
             cases,
             subdirectory_name,
-            f"icospheres_of_different_high_vertex_counts{i}.json",
+            f"icospheres_of_different_high_vertex_counts_{i}.json",
             clean_collider_names=False,
-            omit_reference_distance=True,
             compute_convex_hulls=False,
         )
         i += 1
