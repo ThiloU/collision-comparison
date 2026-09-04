@@ -38,6 +38,13 @@ if [ ! -d "data/icospheres_of_different_high_vertex_counts" ]; then
   cd ..
 fi
 
+if [ ! -d "data/uc1_ur10_collision" ]; then
+  echo "Unzipping primitive benchmark data..."
+  cd data
+  unzip -q uc1_ur10_collision.zip
+  cd ..
+fi
+
 # Clone algorithms not already in repo:
 git clone https://github.com/MaartenBehn/JoltPhysics.git
 git clone https://github.com/danfis/libccd.git
