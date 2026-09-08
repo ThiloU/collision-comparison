@@ -962,9 +962,17 @@ gkFloat compute_minimum_distance(OpenGJKCollider bd1, OpenGJKCollider bd2,
   gkFloat norm2Wmax = 0;
 
   /* Initialise search direction */
-  //TODO: implement better guess for initial search direction?
-  const gkFloat initial_v[3] = {0, 0, 1};
-  const gkFloat initial_v_minus[3] = {0, 0, -1};
+  const gkFloat initial_v[3] = {
+    bd2.collider.translation[0] - bd1.collider.translation[0],
+    bd2.collider.translation[1] - bd1.collider.translation[1],
+    bd2.collider.translation[2] - bd1.collider.translation[2]
+  };
+
+  const gkFloat initial_v_minus[3] = {
+    -initial_v[0],
+    -initial_v[1],
+    -initial_v[2]
+  };
   support(bd1, initial_v, force_linear_support_func);
   support(bd2, initial_v_minus, force_linear_support_func);
   v[0] = bd1.collider.s[0] - bd2.collider.s[0];

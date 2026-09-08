@@ -129,10 +129,8 @@ namespace compare::FCL {
 
         // Same init for both solvers
         Vec3f init_guess = Vec3f(1, 0, 0);
-        support_func_guess_t init_support_guess;
-        init_support_guess.setZero();
 
-        GJK::Status res_gjk = gjk.evaluate(fcl_case.mink_diff, init_guess, init_support_guess);
+        GJK::Status res_gjk = gjk.evaluate(fcl_case.mink_diff, init_guess);
 
         if (res_gjk  == GJK::Status::Failed){
             std::cerr << "HPP-FCL failed to converge while calculating distance" << std::endl;
@@ -148,10 +146,8 @@ namespace compare::FCL {
         gjk.setDistanceEarlyBreak(0);   // if the distance was proven to be more than 0, exit early
 
         Vec3f init_guess = Vec3f(1, 0, 0);
-        support_func_guess_t init_support_guess;
-        init_support_guess.setZero();
 
-        GJK::Status res_gjk = gjk.evaluate(fcl_case.mink_diff, init_guess, init_support_guess);
+        GJK::Status res_gjk = gjk.evaluate(fcl_case.mink_diff, init_guess);
 
         if (res_gjk  == GJK::Status::Failed){
             std::cerr << "HPP-FCL failed to converge while calculating intersection" << std::endl;
