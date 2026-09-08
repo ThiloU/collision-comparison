@@ -30,7 +30,7 @@ def get_multibody(shape, mesh_path, pcid):
             shapeType=pb.GEOM_CAPSULE, radius=shape.radius, height=shape.height,
             physicsClientId=pcid)
     elif type(shape).__name__ == "Sphere":
-        pos, orn = shape.center, np.array([0.0, 0.0, 0.0, 1.0])
+        pos, orn = shape.center(), np.array([0.0, 0.0, 0.0, 1.0])
         collision = pb.createCollisionShape(
             shapeType=pb.GEOM_SPHERE, radius=shape.radius,
             physicsClientId=pcid)

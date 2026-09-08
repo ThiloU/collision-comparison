@@ -21,28 +21,27 @@ def get_cpp_result(path):
 
 
 def get_python_results(path):
+    data = {}
+
     try:
         with open(f"{path}/distance3d_result.json") as f:
             distance3d_result = json.load(f)
+
+            for name in distance3d_result:
+                median = distance3d_result[name]
+                data[f"distance3d {name}"] = median
     except FileNotFoundError:
         warnings.warn(f"No python[distance3d] results found under {path}")
-        return {}
-
-    data = {}
-    for name in distance3d_result:
-        median = distance3d_result[name]
-        data[f"distance3d {name}"] = median
 
     try:
         with open(f"{path}/pybullet_result.json") as f:
             pybullet_result = json.load(f)
+
+            for name in pybullet_result:
+                median = pybullet_result[name]
+                data[f"{name}"] = median
     except FileNotFoundError:
         warnings.warn(f"No python[pybullet] results found under {path}")
-        return {}
-
-    for name in pybullet_result:
-        median = pybullet_result[name]
-        data[f"{name}"] = median
 
     return data
 

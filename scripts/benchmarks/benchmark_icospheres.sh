@@ -21,10 +21,10 @@ do
 
     echo --- Copy Result ---
     mkdir "results/$i"
-    cp "compare-python/pybullet_result.json" "results/$i/";
-    cp "compare-python/distance3d_result.json" "results/$i/";
-    cp "compare-cpp/cpp_result.json" "results/$i/";
-    cp -a "compare-rs/target/criterion" "results/$i/";
+    mv "compare-python/pybullet_result.json" "results/$i/";
+    mv "compare-python/distance3d_result.json" "results/$i/";
+    mv "compare-cpp/cpp_result.json" "results/$i/";
+    mv "compare-rs/target/criterion" "results/$i/";
    fi
   ((i=i+1))
 
