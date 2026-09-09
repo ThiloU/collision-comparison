@@ -264,6 +264,25 @@ namespace compare::libccd {
         }
     }
 
+    void first_dir(const void *_collider0, const void *_collider1, ccd_vec3_t *dir){
+        const Collider &collider0 = ((LibccdCollider *)_collider0)->collider;
+        const Collider &collider1 = ((LibccdCollider *)_collider1)->collider;
+
+        glm::vec3 origin0(collider0.colliderToOrigen[0][3], collider0.colliderToOrigen[1][3], collider0.colliderToOrigen[2][3]);
+        glm::vec3 origin1(collider1.colliderToOrigen[0][3], collider1.colliderToOrigen[1][3], collider1.colliderToOrigen[2][3]);
+
+        glm::vec3 diff = origin1 - origin0;
+
+        // If the origins are too close, use (1,0,0) instead
+        if (glm::dot(diff, diff) < 1e-12f){
+            ccdVec3Set(dir, 1, 0, 0);
+            return;
+        }
+
+        ccdVec3Set(dir, diff[0], diff[1], diff[2]);
+    }
+
+
     void get_case(Collider collider0, Collider collider1, LibccdCase& libccd_case, bool force_linear_support_func){
         CCD_INIT(&libccd_case.ccd);
 
@@ -277,6 +296,7 @@ namespace compare::libccd {
         libccd_case.ccd.support1       = get_support_function(collider0, force_linear_support_func);
         libccd_case.ccd.support2       = get_support_function(collider1, force_linear_support_func);
         libccd_case.ccd.max_iterations = 100;
+        libccd_case.ccd.first_dir = first_dir;
     }
 
     void get_cases(Case *base_cases, LibccdCase *libccd_cases, int length, bool force_linear_support_func){

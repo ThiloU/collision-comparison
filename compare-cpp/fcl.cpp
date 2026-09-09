@@ -127,9 +127,8 @@ namespace compare::FCL {
         GJK gjk(max_iterations, tolerance);
         gjk.gjk_variant = GJKVariant::NesterovAcceleration;
 
-        // Same init for both solvers
-        Vec3f init_guess = Vec3f(1, 0, 0);
-
+        // use origin of collider 1 in the frame of collider 0 as initial support function guess
+        Vec3f init_guess = -fcl_case.mink_diff.ot1;
         GJK::Status res_gjk = gjk.evaluate(fcl_case.mink_diff, init_guess);
 
         if (res_gjk  == GJK::Status::Failed){
@@ -145,8 +144,8 @@ namespace compare::FCL {
         gjk.gjk_variant = GJKVariant::NesterovAcceleration;
         gjk.setDistanceEarlyBreak(0);   // if the distance was proven to be more than 0, exit early
 
-        Vec3f init_guess = Vec3f(1, 0, 0);
-
+        // use origin of collider 1 in the frame of collider 0 as initial support function guess
+        Vec3f init_guess = -fcl_case.mink_diff.ot1;
         GJK::Status res_gjk = gjk.evaluate(fcl_case.mink_diff, init_guess);
 
         if (res_gjk  == GJK::Status::Failed){
