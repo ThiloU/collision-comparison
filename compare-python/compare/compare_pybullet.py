@@ -80,15 +80,16 @@ dist = pb.getClosestPoints(last_collision_pair[0], last_collision_pair[1], np.in
 timer = benchmark.Timer()
 timer.start("pybullet")
 #pb.performCollisionDetection(pcid)
-for (c1, c2) in collision_objects:
-        dist = pb.getClosestPoints(c1, c2, np.inf, physicsClientId=pcid)[0][8]
-        #dist = len(pb.getContactPoints(c1, c2, physicsClientId=pcid)) > 0
+for _ in range(10):
+    for (c1, c2) in collision_objects:
+            dist = pb.getClosestPoints(c1, c2, np.inf, physicsClientId=pcid)[0][8]
+            #dist = len(pb.getContactPoints(c1, c2, physicsClientId=pcid)) > 0
 
 result = {}
 
 duration = timer.stop("pybullet")
 micro = duration * 1000000
-result["Pybullet"] = micro
+result["Pybullet"] = micro / 10.0
 print(f"Pybullet: {micro}")
 
 pb.disconnect(physicsClientId=pcid)
