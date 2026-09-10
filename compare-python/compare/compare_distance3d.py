@@ -48,6 +48,15 @@ def benchmark_nesterov_accelerated_primitives_with_acceleration():
         gjk_nesterov_accelerated_primitives(cases[i][0][0], cases[i][1][0], use_nesterov_acceleration=True)
 
 
+# Run all functions once to fore numba to compile them.
+# This avoids a constant overhead for the first time the benchmarks are run.
+# Simply using @njit(cache=True) does not seem to help with this
+benchmark_original()
+benchmark_jolt_intersection()
+benchmark_jolt_distance()
+benchmark_nesterov_accelerated()
+benchmark_nesterov_accelerated_with_acceleration()
+
 result = {}
 
 times = timeit.repeat(benchmark_original, repeat=10, number=1)

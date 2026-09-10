@@ -70,6 +70,13 @@ for (collider1, mesh_path_1), (collider2, mesh_path_2) in cases:
 
     collision_objects.append((multibody1, multibody2))
 
+# Make sure the internal data structures are already initialized/ caches are  warmed up before starting the actual benchmark
+# Use the last entry of the case file so that during the actual benchmark,
+# PyBullet cannot reuse a potentially cached result for the first case:
+last_collision_pair = collision_objects[-1]
+dist = pb.getClosestPoints(last_collision_pair[0], last_collision_pair[1], np.inf, physicsClientId=pcid)[0][8]
+dist = pb.getClosestPoints(last_collision_pair[0], last_collision_pair[1], np.inf, physicsClientId=pcid)[0][8]
+
 timer = benchmark.Timer()
 timer.start("pybullet")
 #pb.performCollisionDetection(pcid)

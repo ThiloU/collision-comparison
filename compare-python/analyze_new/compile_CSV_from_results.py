@@ -115,9 +115,9 @@ def compile_results(path_to_result_dir: Path, path_to_case_files: Path):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--results_path', default=None,
+    parser.add_argument('results_path', default=None,
                         help='Directory in which the results are saved. Is expected to contain folders named 0,1,2,... for every case file.')
-    parser.add_argument('--case_file_path', default=None,
+    parser.add_argument('case_file_path', default=None,
                         help='Directory in which the case files live. Is expected to contain files called {name_of_dir}_[0,1,2,...].json for every case file.')
     args = parser.parse_args()
 
