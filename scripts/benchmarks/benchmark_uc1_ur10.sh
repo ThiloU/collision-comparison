@@ -30,4 +30,5 @@ do
 
 done
 
+python3 compare-python/analyze_new/compile_CSV_from_results.py results data/uc1_ur10_collision
 

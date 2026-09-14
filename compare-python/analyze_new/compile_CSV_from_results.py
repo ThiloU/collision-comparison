@@ -104,6 +104,9 @@ def compile_results(path_to_result_dir: Path, path_to_case_files: Path):
             **result
         })
 
+    if len(dataframe_records) == 0:
+        print("No results to save")
+        exit(1)
     # store into a CSV:
     df = pd.DataFrame.from_records(dataframe_records)
     df.sort_values(by="file", ascending=True, inplace=True)
