@@ -48,7 +48,7 @@ def benchmark_nesterov_accelerated_primitives_with_acceleration():
         gjk_nesterov_accelerated_primitives(cases[i][0][0], cases[i][1][0], use_nesterov_acceleration=True)
 
 
-# Run all functions once to fore numba to compile them.
+# Run all functions once to force numba to compile them.
 # This avoids a constant overhead for the first time the benchmarks are run.
 # Simply using @njit(cache=True) does not seem to help with this
 benchmark_original()
