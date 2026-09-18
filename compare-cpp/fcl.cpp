@@ -121,7 +121,7 @@ namespace compare::FCL {
         }
     }
 
-    float get_distance(FCLCase& fcl_case){
+    float get_distance_nesterov(FCLCase& fcl_case){
         unsigned int max_iterations = 128;
         FCL_REAL tolerance = 1e-6;
         GJK gjk(max_iterations, tolerance);
@@ -137,11 +137,44 @@ namespace compare::FCL {
         return  gjk.distance;
     }
 
-    bool get_intersection(FCLCase& fcl_case){
+    bool get_intersection_nesterov(FCLCase& fcl_case){
         unsigned int max_iterations = 128;
         FCL_REAL tolerance = 1e-6;
         GJK gjk(max_iterations, tolerance);
         gjk.gjk_variant = GJKVariant::NesterovAcceleration;
+        gjk.setDistanceEarlyBreak(0);   // if the distance was proven to be more than 0, exit early
+
+        // use origin of collider 1 in the frame of collider 0 as initial support function guess
+        Vec3f init_guess = -fcl_case.mink_diff.ot1;
+        GJK::Status res_gjk = gjk.evaluate(fcl_case.mink_diff, init_guess);
+
+        if (res_gjk  == GJK::Status::Failed){
+            std::cerr << "HPP-FCL failed to converge while calculating intersection" << std::endl;
+        }
+        return res_gjk == GJK::Status::Inside;
+    }
+
+    float get_distance_default(FCLCase& fcl_case){
+        unsigned int max_iterations = 128;
+        FCL_REAL tolerance = 1e-6;
+        GJK gjk(max_iterations, tolerance);
+        gjk.gjk_variant = GJKVariant::DefaultGJK;
+
+        // use origin of collider 1 in the frame of collider 0 as initial support function guess
+        Vec3f init_guess = -fcl_case.mink_diff.ot1;
+        GJK::Status res_gjk = gjk.evaluate(fcl_case.mink_diff, init_guess);
+
+        if (res_gjk  == GJK::Status::Failed){
+            std::cerr << "HPP-FCL failed to converge while calculating distance" << std::endl;
+        }
+        return  gjk.distance;
+    }
+
+    bool get_intersection_default(FCLCase& fcl_case){
+        unsigned int max_iterations = 128;
+        FCL_REAL tolerance = 1e-6;
+        GJK gjk(max_iterations, tolerance);
+        gjk.gjk_variant = GJKVariant::DefaultGJK;
         gjk.setDistanceEarlyBreak(0);   // if the distance was proven to be more than 0, exit early
 
         // use origin of collider 1 in the frame of collider 0 as initial support function guess

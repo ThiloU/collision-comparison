@@ -1,7 +1,7 @@
 #!/bin/bash
 
 i=0
-until [ $i -gt 1999 ]
+until [ $i -gt 799 ]
 do
   echo i: $i
 
