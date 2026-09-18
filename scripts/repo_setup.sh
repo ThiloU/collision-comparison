@@ -45,6 +45,14 @@ if [ ! -d "data/uc1_ur10_collision" ]; then
   cd ..
 fi
 
+if [ ! -d "data/icospheres_fixed_size_distance_sweep" ]; then
+  echo "Unzipping benchmark data for icosphere distance sweep..."
+  cd data
+  unzip -q icospheres_fixed_size_distance_sweep.zip
+  cd ..
+fi
+
+
 # Clone algorithms not already in repo:
 git clone https://github.com/MaartenBehn/JoltPhysics.git
 git clone https://github.com/danfis/libccd.git
