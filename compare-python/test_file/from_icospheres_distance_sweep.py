@@ -1,6 +1,6 @@
 """
 Generate benchmark cases to replicate the experimental setup used in the
-"Collision Detection Accelerated: An Optimization Perspective" paper which introduced Nesterov Accelerated GJK:
+paper which introduced Nesterov Accelerated GJK:
 for a FIXED shape pair, sample many random relative poses for each of a
 range of target separation distances dist(A1, A2) in [-0.1 m, 1 m]
 to see how different algorithms perform on different distances.
@@ -23,9 +23,9 @@ from distance3d.epa import epa
 from src import write_test_file
 
 
-# Fixed mesh: same face count and size for every generated case.
-FACE_COUNT = 1000
-ICOSPHERE_RADIUS = 0.5
+# Set icosphere details to closely resemble the objects used in the complex_env_dual_arm_collision benchmark
+FACE_COUNT = 2885
+ICOSPHERE_RADIUS = 0.0946
 
 # Number of random relative poses (rotation of both shapes + random
 # separation axis) per target distance value:

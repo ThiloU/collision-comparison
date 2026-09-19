@@ -12,6 +12,7 @@ import distance3d.colliders
 import numpy as np
 
 from distance3d.colliders import Sphere, Box, Capsule, Cylinder, MeshGraph
+from distance3d.epa import epa
 from distance3d.gjk import gjk
 
 
@@ -143,6 +144,28 @@ def simplify_mesh(collider: MeshGraph, max_num_points):
 
     return MeshGraph(collider.mesh2origin, np.asarray(simplified.vertices), np.asarray(simplified.triangles))
 
+
+def signed_distance(collider0, collider1):
+    """
+    Computes the signed distance between the colliders. For negative distances, this uses EPA.
+    """
+    dist, _, _, simplex = gjk(collider0, collider1)
+
+    if dist > 0:
+        return dist
+
+    try:
+        mtv, _, success = epa(simplex, collider0, collider1)
+        if success:
+            depth = np.linalg.norm(mtv)
+            if depth > 0:
+                return -depth
+    except Exception:
+        pass
+
+    return 0.0
+
+
 def write_test_file(cases, save_path: str, file_name: str,
                     hull_max_vertices: int | None = None,
                     clean_collider_names = True,
@@ -200,6 +223,7 @@ def write_test_file(cases, save_path: str, file_name: str,
             "collider1": to_dict(collider0, subdirectory_name + "/meshes/" + collider0_name + ".obj"),
             "collider2": to_dict(collider1, subdirectory_name + "/meshes/" + collider1_name + ".obj"),
             "distance": distance,
+            "signed_distance": signed_distance(collider0, collider1),
         }
         shapes.append(data)
         i += 1
