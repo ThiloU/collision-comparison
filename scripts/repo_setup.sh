@@ -8,6 +8,20 @@ apt update -y
 apt install -y unzip
 pip install open3d
 
+# install open3d dependencies manually because this was causing problems before:
+apt-get update && apt-get install -y --no-install-recommends \
+    libgl1 \
+    libglx0 \
+    libegl1 \
+    libglu1-mesa \
+    libgomp1 \
+    libusb-1.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender1 \
+    libxi6 \
+    libglib2.0-0
+
 mkdir -p results
 
 if [ ! -d "data/complex_env_dual_arm_collision" ]; then
