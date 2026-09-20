@@ -7,6 +7,7 @@ source /opt/miniconda/bin/activate collision_env
 apt update -y
 apt install -y unzip
 pip install open3d
+pip install pandas
 
 # install open3d dependencies manually because this was causing problems before:
 apt-get update && apt-get install -y --no-install-recommends \
