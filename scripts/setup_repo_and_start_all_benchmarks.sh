@@ -36,4 +36,4 @@ bash scripts/benchmarks/benchmark_high_vertex_count_icospheres.sh
 
 rm -rf results/*
 
-bash scripts/benchmarks/icospheres_fixed_size_distance_sweep.sh
+bash scripts/benchmarks/benchmark_icospheres_fixed_size_distance_sweep.sh
