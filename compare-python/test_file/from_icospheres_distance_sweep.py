@@ -1,12 +1,6 @@
 """
 Generate benchmark cases to replicate the experimental setup used in the
 paper which introduced Nesterov Accelerated GJK:
-for a FIXED shape pair, sample many random relative poses for each of a
-range of target separation distances dist(A1, A2) in [-0.1 m, 1 m]
-to see how different algorithms perform on different distances.
-
-Note: the "distance" field in the case files only stores the non-negative distance.
-The actual signed distance is stored in the "target_distances.csv" file.
 """
 
 import os
@@ -27,21 +21,15 @@ from src import write_test_file
 FACE_COUNT = 2885
 ICOSPHERE_RADIUS = 0.0946
 
-# Number of random relative poses (rotation of both shapes + random
-# separation axis) per target distance value:
+# Number of random relative poses per target distance:
 NUM_POSES_PER_DISTANCE = 100
 
-# Signed separation distances to use, using roughly logarithmic spacing to cover both close and far distances:
+# Signed separation distances to use, with roughly logarithmic spacing:
 TARGET_DISTANCES = np.concatenate([
     -np.array([0.1, 0.05, 0.02, 0.01, 0.005, 0.002, 0.001]),
     [0.0],
     np.array([0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0]),
 ])
-
-# Bisection settings for hitting each target distance.
-BISECTION_TOLERANCE = 1e-6
-BISECTION_MAX_ITER = 60
-INITIAL_T_HI = 3.0 * ICOSPHERE_RADIUS  # initial upper bracket for the search
 
 subdirectory_name = "../data/icospheres_fixed_size_distance_sweep"
 os.makedirs(subdirectory_name + "/meshes", exist_ok=True)
@@ -64,8 +52,7 @@ def rand_unit_vector():
 
 def build_fixed_icosphere(face_count, radius):
     """
-    Build a single icosphere mesh with (approximately) `face_count` faces and
-    the given radius.
+    Build a single icosphere mesh with `face_count` faces and the given radius.
     """
     subdivs_needed = np.ceil(np.emath.logn(4, max(face_count, 20) / 20.0)).astype(int)
     source_icosphere = make_triangular_icosphere(center=np.array([0, 0, 0]), radius=radius, order=subdivs_needed)
@@ -89,10 +76,7 @@ def build_fixed_icosphere(face_count, radius):
 
 def signed_distance(collider0, collider1, transform1):
     """
-    Move `collider1` to `transform1` (collider0 stays at the origin), then compute the signed distance between them.
-        (For negative distances, uses EPA)
-      * 0.0: shapes are touching, or EPA could not resolve the penetration
-             depth (e.g. degenerate contact simplex)
+    Returns the signed distance between the two colliders, after applying transform1 to collider1.
     """
     collider1.update_pose(transform1)
     dist, _, _, simplex, _ = gjk_distance_original(collider0, collider1)
@@ -114,18 +98,13 @@ def signed_distance(collider0, collider1, transform1):
     return 0.0
 
 
-def find_translation_for_target_distance(collider0, collider1, rotation1, axis, target_distance,
-                                         t_lo=0.0, t_hi=INITIAL_T_HI,
-                                         tolerance=BISECTION_TOLERANCE, max_iter=BISECTION_MAX_ITER):
+def find_translation_for_target_distance(collider0, collider1, rotation1, axis, target_distance):
     """
-    Use binary search to find the translation magnitude t along `axis` (collider1 rotated by
-    `rotation1`, collider0 fixed at the origin) so that signed_distance(t) is
+    Use binary search to find the translation amount t along `axis` (collider1 is rotated by
+    `rotation1`, collider0 is fixed at the origin) so that signed_distance(t) is
     as close as possible to `target_distance`.
 
-    At t=0 both shapes are centered on the same point (maximal overlap), and
-    signed_distance is monotonically non-decreasing as t grows from there for
-    roughly spherical convex shapes, which lets plain bisection work well in
-    practice.
+    At t=0 both shapes are centered on the same point (maximal overlap).
     :return: (t, achieved_distance)
     """
 
@@ -135,7 +114,7 @@ def find_translation_for_target_distance(collider0, collider1, rotation1, axis, 
         transform1[:3, 3] = axis * t
         return signed_distance(collider0, collider1, transform1)
 
-    lo, hi = t_lo, t_hi
+    lo, hi = 0, (3.0 * ICOSPHERE_RADIUS)
     f_hi = eval_t(hi)
     expand_attempts = 0
     while f_hi < target_distance and expand_attempts < 10:
@@ -144,16 +123,18 @@ def find_translation_for_target_distance(collider0, collider1, rotation1, axis, 
         expand_attempts += 1
 
     t_mid, f_mid = hi, f_hi
-    for _ in range(max_iter):
+    for _ in range(100):
         t_mid = 0.5 * (lo + hi)
         f_mid = eval_t(t_mid)
-        if abs(f_mid - target_distance) < tolerance:
+        if abs(f_mid - target_distance) < 1e-6:
             break
         if f_mid < target_distance:
             lo = t_mid
         else:
             hi = t_mid
 
+    if abs(f_mid - target_distance) > 1e-6:
+        print(f"Warning: Failed to converge on solution for distance {target_distance}m, could only reach {f_mid}m")
     return t_mid, f_mid
 
 

@@ -4,6 +4,9 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import miniball
 import numpy as np
+from matplotlib.lines import Line2D
+from matplotlib.ticker import PercentFormatter
+
 from src import load_test_file
 from src.test_file import load_mesh_from_obj
 
@@ -32,16 +35,37 @@ for entry in directory_contents:
             num_cases_in_distance_interval += 1
 
 print(f"Number of cases in distance interval {DIST_INTERVAL}: {num_cases_in_distance_interval}  = {(num_cases_in_distance_interval/len(distances))*100:.2f}%")
+print(f"Number of cases (total): {len(distances)}")
 # plt.scatter(distances, y=np.arange(len(distances)) // 40)
 
+fig, ax = plt.subplots(tight_layout=True)
+cmap = plt.colormaps["coolwarm"]
+N, bins, patches = ax.hist(distances,
+                           bins=75,
+                           weights=np.full_like(distances, 1/len(distances)),
+                           )
+ax.yaxis.set_major_formatter(PercentFormatter(xmax=1))
+bin_colors = []
+for i in range(len(bins)-1):
+    bin_middle = (bins[i]+bins[i+1])/2.0
+    bin_colors.append(0.9 if DIST_INTERVAL[0] <= bin_middle < DIST_INTERVAL[1] else 0.1)
 
-counts, bins = np.histogram(distances, bins=30)
-plt.stairs(counts, bins)
+for color, patch in zip(bin_colors, patches):
+    patch.set_facecolor(color = cmap(color))
+
+custom_lines = [
+    Line2D([0], [0], color=cmap(0.9), lw=4),
+    Line2D([0], [0], color=cmap(0.1), lw=4)
+]
+
+ax.legend(custom_lines, ['Nesterov Accelerated GJK\nis likely more performant',
+                         'Vanilla GJK is likely\nmore performant'
+                         ])
+
 plt.title("Histogram of distance distribution")
-plt.xlabel("Distance")
-plt.ylabel("Count")
+plt.xlabel("Distance [m]")
+plt.ylabel("Percentage")
 plt.show()
-
 
 meshes_path = Path(BENCHMARK_DIR, "meshes")
 
@@ -63,14 +87,14 @@ if meshes_path.exists():
         n_faces.append(len(tris))
 
 
-    print(f"Average Radius: {np.mean(radii):.4f}m")
+    print(f"Median Radius: {np.median(radii):.4f}m")
     print(f"Minimum Radius: {np.min(radii):.4f}m in mesh: {mesh_names[np.argmin(radii)]}")
     print(f"Maximum Radius: {np.max(radii):.4f}m in mesh: {mesh_names[np.argmax(radii)]}")
 
-    print(f"Average # of vertices: {np.mean(n_vertices):.0f}")
+    print(f"Median # of vertices: {np.median(n_vertices):.0f}")
     print(f"Minimum # of vertices: {np.min(n_vertices):.0f} in mesh: {mesh_names[np.argmin(n_vertices)]}")
     print(f"Maximum # of vertices: {np.max(n_vertices):.0f} in mesh: {mesh_names[np.argmax(n_vertices)]}")
 
-    print(f"Average # of faces: {np.mean(n_faces):.0f}")
+    print(f"Median # of faces: {np.median(n_faces):.0f}")
     print(f"Minimum # of faces: {np.min(n_faces):.0f} in mesh: {mesh_names[np.argmin(n_faces)]}")
     print(f"Maximum # of faces: {np.max(n_faces):.0f} in mesh: {mesh_names[np.argmax(n_faces)]}")
